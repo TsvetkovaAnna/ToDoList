@@ -13,7 +13,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        print("-------------------")
+        for todo in FileCache().checkData() ?? [ToDoItem]() {
+            print(todo.id, todo.toDoDone, todo.text, todo.deadline)
+        }
+        
         return true
     }
 
