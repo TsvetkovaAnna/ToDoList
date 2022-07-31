@@ -1,20 +1,26 @@
 
 import UIKit
 
-//let date = Date()
-//let format = date.getFormatedDate(format: "dd.MM.YYYY")
-//extension Date {
-//    func getFormatedDate(format: String) -> String {
-//        let dateFormat = DateFormatter()
-//        dateFormat.dateFormat = format
-//        return dateFormat.string(from: self)
-//
-//    }
-//}
-
 struct ToDoItemList {
     
     let todoItems: [ToDoItem]?
+    
+    static func json(fromItems todoItems: [ToDoItem]) -> Data? {
+        
+        var jsonArray = [[String: Any]]()
+        
+        for item in todoItems {
+            jsonArray.append(item.json)
+        }
+        
+        do {
+            return try JSONSerialization.data(withJSONObject: ["list": jsonArray])
+        } catch {
+            print(error)
+        }
+        
+        return nil
+    }
     
     init(_ dict: [String: Any]) {
         guard let list = dict["list"] as? [[String: Any]] else {
@@ -47,18 +53,20 @@ struct ToDoItem {
     let dateChanged: Date?
     
     private init(dict: [String: Any]) {
+        
         id = dict["id"] as? String ?? UUID().uuidString
         text = dict["text"] as? String ?? ""
         importance = dict["importance"] as? ImportanceEnum ?? ImportanceEnum.basic
-        
-        if let unixDeadlineString = dict["deadline"] as? String, let unixDeadLine = Double(unixDeadlineString) {
-            deadline = Date(timeIntervalSince1970: unixDeadLine)
-        } else { deadline = nil }
-        
         toDoDone = dict["toDoDone"] as? Bool ?? false
-        dateCreated = dict["dateCreated"] as? Date ?? Date.now
-        dateChanged = dict["dateChanged"] as? Date ?? nil
-
+        
+        func dateByKey(_ key: String) -> Date? {
+            guard let unixDeadline = dict[key] as? Int64 else { return nil }
+            return Date(timeIntervalSince1970: Double(unixDeadline))
+        }
+        
+        deadline = dateByKey("deadline")
+        dateChanged = dateByKey("dateChanged")
+        dateCreated = dateByKey("dateCreated") ?? Date.now
     }
 }
 
@@ -86,33 +94,84 @@ extension ToDoItem {
 
 final class FileCache {
     
+    private let fileManager = FileManager.default
+    
+    private var docUrl: URL? {
+        fileManager.urls(for: .documentDirectory, in: .userDomainMask).first
+    }
+    
+    private var cacheUrl: URL? {
+        guard let url = docUrl else { return nil }
+        print(url)
+        return url.appendingPathComponent("ToDoItems.txt")
+    }
+    
     private var arrayToDoItems = [ToDoItem]()
-    private let jsonPath = Bundle.main.path(forResource: "fileJSON", ofType: "json")!
+    private var jsonPath: String? {
+        Bundle.main.path(forResource: "fileJSON", ofType: "json")
+    }
     
     func addItem(item: ToDoItem) {
         arrayToDoItems.append(item)
-        //saveData()
-        
+        saveData()
     }
     
     func deleteItem(byId: String) {
         guard let index = arrayToDoItems.firstIndex(where: { $0.id == byId }) else { return }
         arrayToDoItems.remove(at: index)
-        //saveData()
+        saveData()
     }
     
     func saveData() {
-//        for arrayToDoItem in arrayToDoItems {
-//            //let js = arrayToDoItem.json
-//        }
+        guard let cacheUrl = cacheUrl,
+              arrayToDoItems.count > 0,
+              let jsonData = ToDoItemList.json(fromItems: arrayToDoItems)
+        else { return }
+        
+        fileManager.createFile(atPath: cacheUrl.path, contents: jsonData)
     }
     
     func loadData() {
-        parseFromFile(pathForFile: jsonPath)
+        
+        var parsed: [ToDoItem]? = nil
+        
+        parsed = parseCache()
+        
+        if parsed == nil {
+            guard let path = jsonPath else { return }
+            parsed = parseFromFile(pathForFile: path)
+        }
+        
+        guard let parsedItems = parsed else { return }
+        
+        arrayToDoItems = parsedItems
     }
     
     func checkData() -> [ToDoItem]? {
-        parseFromFile(pathForFile: jsonPath)
+        guard let path = jsonPath else { return nil }
+        return parseFromFile(pathForFile: path)
+    }
+    
+    var checkTodoItems: [ToDoItem] {
+        arrayToDoItems
+    }
+    
+    func parseCache() -> [ToDoItem]? {
+        
+        guard let cacheUrl = cacheUrl else { return nil }
+        
+        do {
+            let cacheData = try Data(contentsOf: cacheUrl)
+            guard let cacheDict = try JSONSerialization.jsonObject(with: cacheData, options: .allowFragments) as? [String: [[String: Any]]]
+            else { return nil }
+            
+            return ToDoItemList(cacheDict).todoItems
+            
+        } catch {
+            print(error)
+        }
+        
+        return nil
     }
     
     @discardableResult func parseFromFile(pathForFile: String) -> [ToDoItem]? {
