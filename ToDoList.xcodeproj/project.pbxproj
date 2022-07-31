@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		951D37A42894545800DA3BEC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D37A32894545800DA3BEC /* AppDelegate.swift */; };
 		951D37A62894545800DA3BEC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D37A52894545800DA3BEC /* SceneDelegate.swift */; };
-		951D37A82894545800DA3BEC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D37A72894545800DA3BEC /* ViewController.swift */; };
+		951D37A82894545800DA3BEC /* TaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D37A72894545800DA3BEC /* TaskViewController.swift */; };
 		951D37AD2894546000DA3BEC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 951D37AC2894546000DA3BEC /* Assets.xcassets */; };
 		951D37B02894546000DA3BEC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 951D37AE2894546000DA3BEC /* LaunchScreen.storyboard */; };
 		951D37BB2894546000DA3BEC /* ToDoListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D37BA2894546000DA3BEC /* ToDoListTests.swift */; };
@@ -19,6 +19,7 @@
 		951D37D8289460E100DA3BEC /* fileJSON.json in Resources */ = {isa = PBXBuildFile; fileRef = 951D37D7289460E100DA3BEC /* fileJSON.json */; };
 		951D37DA2895C41300DA3BEC /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 951D37D92895C41300DA3BEC /* .gitignore */; };
 		95D84CA22896F1840001AE51 /* MathFunc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D84CA12896F1840001AE51 /* MathFunc.swift */; };
+		95D84CA42897243B0001AE51 /* IndentTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D84CA32897243B0001AE51 /* IndentTextField.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,7 +43,7 @@
 		951D37A02894545800DA3BEC /* ToDoList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDoList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		951D37A32894545800DA3BEC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		951D37A52894545800DA3BEC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		951D37A72894545800DA3BEC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		951D37A72894545800DA3BEC /* TaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewController.swift; sourceTree = "<group>"; };
 		951D37AC2894546000DA3BEC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		951D37AF2894546000DA3BEC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		951D37B12894546000DA3BEC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -55,6 +56,7 @@
 		951D37D7289460E100DA3BEC /* fileJSON.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = fileJSON.json; sourceTree = "<group>"; };
 		951D37D92895C41300DA3BEC /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; name = .gitignore; path = ToDoList/.gitignore; sourceTree = "<group>"; };
 		95D84CA12896F1840001AE51 /* MathFunc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathFunc.swift; sourceTree = "<group>"; };
+		95D84CA32897243B0001AE51 /* IndentTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndentTextField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,8 +111,9 @@
 				951D37A32894545800DA3BEC /* AppDelegate.swift */,
 				951D37A52894545800DA3BEC /* SceneDelegate.swift */,
 				951D37D32894608800DA3BEC /* ToDoItemModel.swift */,
+				95D84CA32897243B0001AE51 /* IndentTextField.swift */,
 				951D37D7289460E100DA3BEC /* fileJSON.json */,
-				951D37A72894545800DA3BEC /* ViewController.swift */,
+				951D37A72894545800DA3BEC /* TaskViewController.swift */,
 				951D37AC2894546000DA3BEC /* Assets.xcassets */,
 				951D37AE2894546000DA3BEC /* LaunchScreen.storyboard */,
 				951D37B12894546000DA3BEC /* Info.plist */,
@@ -268,9 +271,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				951D37A82894545800DA3BEC /* ViewController.swift in Sources */,
+				951D37A82894545800DA3BEC /* TaskViewController.swift in Sources */,
 				95D84CA22896F1840001AE51 /* MathFunc.swift in Sources */,
 				951D37D42894608800DA3BEC /* ToDoItemModel.swift in Sources */,
+				95D84CA42897243B0001AE51 /* IndentTextField.swift in Sources */,
 				951D37A42894545800DA3BEC /* AppDelegate.swift in Sources */,
 				951D37A62894545800DA3BEC /* SceneDelegate.swift in Sources */,
 			);

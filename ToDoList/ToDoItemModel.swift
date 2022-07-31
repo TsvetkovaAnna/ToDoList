@@ -36,21 +36,32 @@ struct ToDoItemList {
     }
 }
 
+enum ImportanceEnum: String {
+    case low
+    case basic
+    case important
+}
+
 struct ToDoItem {
     
     
     let id: String
     let text: String
-    enum ImportanceEnum: String {
-        case low
-        case basic
-        case important
-    }
     let importance: ImportanceEnum
     let deadline: Date?
     let toDoDone: Bool
     let dateCreated: Date
     let dateChanged: Date?
+    
+    init(text: String, importance: ImportanceEnum, deadline: Date?) {
+        self.id = UUID().uuidString
+        self.text = text
+        self.importance = importance
+        self.deadline = deadline
+        self.toDoDone = false
+        self.dateCreated = Date()
+        self.dateChanged = nil
+    }
     
     private init(dict: [String: Any]) {
         
@@ -94,6 +105,10 @@ extension ToDoItem {
 
 final class FileCache {
     
+    init() {
+        loadData()
+    }
+    
     private let fileManager = FileManager.default
     
     private var docUrl: URL? {
@@ -131,6 +146,10 @@ final class FileCache {
         fileManager.createFile(atPath: cacheUrl.path, contents: jsonData)
     }
     
+    func loadLast() -> ToDoItem? {
+        arrayToDoItems.last
+    }
+    
     func loadData() {
         
         var parsed: [ToDoItem]? = nil
@@ -147,14 +166,14 @@ final class FileCache {
         arrayToDoItems = parsedItems
     }
     
-    func checkData() -> [ToDoItem]? {
-        guard let path = jsonPath else { return nil }
-        return parseFromFile(pathForFile: path)
-    }
-    
-    var checkTodoItems: [ToDoItem] {
-        arrayToDoItems
-    }
+//    func checkData() -> [ToDoItem]? {
+//        guard let path = jsonPath else { return nil }
+//        return parseFromFile(pathForFile: path)
+//    }
+//
+//    var checkTodoItems: [ToDoItem] {
+//        arrayToDoItems
+//    }
     
     func parseCache() -> [ToDoItem]? {
         
