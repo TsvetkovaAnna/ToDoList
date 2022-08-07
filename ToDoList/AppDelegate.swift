@@ -14,17 +14,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        let cacher = FileCache()
-        
-        cacher.loadData()
-        print("FirstText:", cacher.checkTodoItems[0].text)
-        //print("FirstText:", cacher.checkTodoItems[0].deadline)
-        print("FirstText:", cacher.checkTodoItems[0].dateCreated)
-        cacher.deleteItem(byId: "Mama")
-        cacher.loadData()
-        print("FirstText:", cacher.checkTodoItems[0].text)
-        //print("FirstText:", cacher.checkTodoItems[0].deadline)
-        print("FirstText:", cacher.checkTodoItems[0].dateCreated)
+//        let cacher = FileCache()
+//
+//        cacher.loadData()
+//        print("FirstText:", cacher.checkTodoItems[0].text)
+//        //print("FirstText:", cacher.checkTodoItems[0].deadline)
+//        print("FirstText:", cacher.checkTodoItems[0].dateCreated)
+//        cacher.deleteItem(byId: "Mama")
+//        cacher.loadData()
+//        print("FirstText:", cacher.checkTodoItems[0].text)
+//        //print("FirstText:", cacher.checkTodoItems[0].deadline)
+//        print("FirstText:", cacher.checkTodoItems[0].dateCreated)
         return true
     }
 
