@@ -1,10 +1,3 @@
-//
-//  TaskTableViewCell.swift
-//  YaToDoList
-//
-//  Created by Anna Tsvetkova on 04.08.2022.
-//
-
 import UIKit
 
 //protocol TaskTableViewCellDelegate: AnyObject {
@@ -21,7 +14,7 @@ class TaskTableViewCell: UITableViewCell {
     
     private lazy var backView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+        view.backgroundColor = Constants.Colors.Back.secondaryElevated
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -48,9 +41,9 @@ class TaskTableViewCell: UITableViewCell {
     private lazy var label: UILabel = {
         let label = UILabel()
         label.text = "Новое"
-        label.textColor = .black//UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
+        label.textColor = Constants.Colors.Label.primary
         label.backgroundColor = .clear
-        label.font = UIFont(name: "SFProText-Regular", size: 17)
+        label.font = Constants.Fonts.body
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -58,7 +51,7 @@ class TaskTableViewCell: UITableViewCell {
     private lazy var exclamationMark: UIImageView = {
         let image = UIImageView()
         image.contentMode = .scaleAspectFit
-        image.image = UIImage(systemName: "exclamationmark.2", withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .bold))?.withTintColor(.red, renderingMode: .alwaysOriginal)
+        image.image = Constants.Images.exclamationmark
 //        image.tintColor = .red
         //image.sizeThatFits(CGSize(width: 13, height: 12)) //??
         image.isHidden = true
@@ -79,7 +72,7 @@ class TaskTableViewCell: UITableViewCell {
     private lazy var calendarImage: UIImageView = {
         let image = UIImageView()
         image.contentMode = .left
-        image.image = UIImage(systemName: "calendar", withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .bold))?.withTintColor(UIColor(red: 0, green: 0, blue: 0, alpha: 0.3), renderingMode: .alwaysOriginal)
+        image.image = Constants.Images.calendar
         //image.sizeThatFits(CGSize(width: 13, height: 12))
         image.isHidden = true
         image.translatesAutoresizingMaskIntoConstraints = false
@@ -89,25 +82,26 @@ class TaskTableViewCell: UITableViewCell {
     private lazy var deadlineLabel: UILabel = {
         let label = UILabel()
         //label.text = "00.00.0000"
-        label.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
-        label.font = UIFont(name: "SFProText-Regular", size: 15)
+        label.textColor = Constants.Colors.Label.tertiary
+        label.font = Constants.Fonts.subhead
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private lazy var circleImage: UIImageView = {
         let image = UIImageView()
-        image.image = UIImage(systemName: "circle")?.withTintColor(UIColor(red: 0, green: 0, blue: 0, alpha: 0.2), renderingMode: .alwaysOriginal)
+        image.image = Constants.Images.circleGray
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
     }()
     
-    private lazy var chevronButton: UIButton = {
-        let button = UIButton()
-        button.setBackgroundImage(UIImage(systemName: "chevron.right")?.withTintColor(UIColor(red: 0.557, green: 0.557, blue: 0.576, alpha: 1)), for: .normal)
+    private lazy var chevronImage: UIImageView = {
+        let image = UIImageView()
+        image.contentMode = .right
+        image.image = Constants.Images.chevron
         //button.addTarget(self, action: #selector(openTask), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
+        image.translatesAutoresizingMaskIntoConstraints = false
+        return image
     }()
     
 //    @objc private func openTask() {
@@ -174,11 +168,11 @@ class TaskTableViewCell: UITableViewCell {
 //        let toplabelConst = label.topAnchor.constraint(equalTo: backView.topAnchor, constant: 16)
 //        let bottomlabelConst = label.bottomAnchor.constraint(equalTo: backView.bottomAnchor, constant: -16)
         
-        backView.addSubview(chevronButton)
-        let leftButtonConct = chevronButton.trailingAnchor.constraint(equalTo: backView.trailingAnchor, constant: -16)
-        let centerYButton = chevronButton.centerYAnchor.constraint(equalTo: backView.centerYAnchor)
-        let widthButton = chevronButton.widthAnchor.constraint(equalToConstant: 6.95)
-        let heightButton = chevronButton.heightAnchor.constraint(equalToConstant: 11.9)
+        backView.addSubview(chevronImage)
+        let leftButtonConct = chevronImage.trailingAnchor.constraint(equalTo: backView.trailingAnchor, constant: -16)
+        let centerYButton = chevronImage.centerYAnchor.constraint(equalTo: backView.centerYAnchor)
+        let widthButton = chevronImage.widthAnchor.constraint(equalToConstant: 6.95)
+        let heightButton = chevronImage.heightAnchor.constraint(equalToConstant: 11.9)
         
         NSLayoutConstraint.activate([leftBV, rightBV, topBV, bottomBV, leftImageConct, centerYImage, widthImage, heightImage, leftStackConct, rightStackConct, topStackConst, bottomStackConst, leftButtonConct, centerYButton, widthButton, heightButton, markHeight].compactMap({ $0 }))
     }

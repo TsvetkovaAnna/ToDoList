@@ -6,7 +6,7 @@ class HeaderListView: UIView {
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.distribution = .fillEqually
-        stack.backgroundColor = .init(_colorLiteralRed: 0.97, green: 0.97, blue: 0.95, alpha: 1.0)
+        stack.backgroundColor = Constants.Colors.Back.primary
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
@@ -15,8 +15,8 @@ class HeaderListView: UIView {
     private lazy var doneCountLabel: UILabel = {
         let label = UILabel()
         label.text = "Выполнено - " + String(doneCount)
-        label.font = UIFont(name: "SFProText-Regular", size: 15)
-        label.textColor = .init(red: 0.0, green: 0.48, blue: 1.0, alpha: 1.0)
+        label.font = Constants.Fonts.subhead
+        label.textColor = Constants.Colors.Label.tertiary
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -27,8 +27,8 @@ class HeaderListView: UIView {
         //button.titleLabel = shownDoneTasks ? "Показать" : "Скрыть"
         button.setTitle("Показать", for: .normal)
         button.setTitle("Скрыть", for: .disabled)
-        button.titleLabel?.font = UIFont(name: "SFProText-Semibold", size: 15)
-        button.setTitleColor(.init(red: 0.0, green: 0.48, blue: 1.0, alpha: 1.0), for: .normal)
+        button.titleLabel?.font = Constants.Fonts.subhead
+        button.setTitleColor(Constants.Colors.Color.blue, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()

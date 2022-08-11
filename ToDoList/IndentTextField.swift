@@ -1,4 +1,3 @@
-
 import UIKit
 
 class IndentTextField: UITextField {
@@ -18,4 +17,3 @@ class IndentTextField: UITextField {
     }
 
 }
-

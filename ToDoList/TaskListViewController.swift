@@ -7,55 +7,29 @@ protocol TaskListViewInput: AnyObject {
 
 protocol TaskListViewOutput: AnyObject {
     func didSelectItem(_ item: ToDoItem?, onCellFrame: CGRect?, indexPath: IndexPath?)
+    func presentNewItem(_ item: ToDoItem?)
 }
 
 final class TaskListViewController: UIViewController {
 
     let fileCache: FileCache
-    private weak var delegate: TaskListViewInput?
+    weak var delegate: TaskListViewInput?
+    //private weak var delegate2: TaskListViewReload?
+    
     private var lastIndexPath: IndexPath?
     
     private lazy var viewTable: TaskListView = {
-        print(fileCache.arrayToDoItems.map({ $0.text}))
-        let view = TaskListView(frame: .zero, todoItems: fileCache.arrayToDoItems, deleteAction: { indexPath in
-            let item = self.fileCache.arrayToDoItems[indexPath.row]
+        print(fileCache.items.map({ $0.text}))
+        let view = TaskListView(frame: .zero, todoItems: fileCache.items, deleteAction: { indexPath in
+            let item = self.fileCache.items[indexPath.row]
             self.fileCache.deleteItem(byId: item.id)
-            self.delegate?.update(with: self.fileCache.arrayToDoItems, deletingRow: indexPath, refreshingRow: nil)
+            self.delegate?.update(with: self.fileCache.items, deletingRow: indexPath, refreshingRow: nil)
         })
         delegate = view
         view.delegate = self
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    
-//    var doneCount = 0
-//    private lazy var doneCountLabel: UILabel = {
-//        let label = UILabel()
-//        label.text = "Выполнено - " + String(doneCount)
-//        label.font = UIFont(name: "SFProText-Regular", size: 15)
-//        label.textColor = .init(red: 0.0, green: 0.48, blue: 1.0, alpha: 1.0)
-//        label.translatesAutoresizingMaskIntoConstraints = false
-//        return label
-//    }()
-//
-//    var shownDoneTasks = false // ? нужно еще?
-//    private lazy var showHideDoneTasksButton: UIButton = {
-//        let button = UIButton()
-//        //button.titleLabel = shownDoneTasks ? "Показать" : "Скрыть"
-//        button.setTitle("Показать", for: .normal)
-//        button.titleLabel?.font = UIFont(name: "SFProText-Semibold", size: 15)
-//        button.setTitleColor(.init(red: 0.0, green: 0.48, blue: 1.0, alpha: 1.0), for: .normal)
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//        return button
-//    }()
-    
-//    private lazy var addButton: UIButton = {
-//        let button = UIButton()
-//        button.backgroundColor = .clear
-//        button.setImage(UIImage(systemName: "plus.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 44, weight: .bold))?.withTintColor(UIColor.init(red: 0.0, green: 0.48, blue: 1.0, alpha: 1.0)), for: .normal)
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//        return button
-//    }()
     
     init(fileCache: FileCache) {
         self.fileCache = fileCache
@@ -77,10 +51,11 @@ final class TaskListViewController: UIViewController {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.prefersLargeTitles = true
         
-        //print("updating at", lastIndexPath ?? "(no index)")
         DDLogInfo("updating at \(String(describing: lastIndexPath))")
         fileCache.loadData()
-        self.delegate?.update(with: self.fileCache.arrayToDoItems, deletingRow: nil, refreshingRow: lastIndexPath)
+        //print("update", lastIndexPath, "\n", self.fileCache.items)
+        //self.delegate?.update(with: self.fileCache.items, deletingRow: lastIndexPath, refreshingRow: lastIndexPath)
+        self.delegate?.update(with: self.fileCache.items, deletingRow: nil, refreshingRow: lastIndexPath)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -100,28 +75,18 @@ final class TaskListViewController: UIViewController {
         let tableTrailing = viewTable.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         viewTable.backgroundColor = .clear
         
-//        view.addSubview(doneCountLabel)
-//        let doneCountLabelTop = doneCountLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 18)
-//        //let doneCountLabelBottom = doneCountLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-//        let doneCountLabelLeading = doneCountLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 32)
-//        //let doneCountLabelTrailing = doneCountLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-//
-//        view.addSubview(showHideDoneTasksButton)
-//        let showHideDoneTasksButtonTop = showHideDoneTasksButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 18)
-//        let showHideDoneTasksButtonTrailing = showHideDoneTasksButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -32)
-//        let showHideDoneTasksButtonHeight = showHideDoneTasksButton.heightAnchor.constraint(equalToConstant: 20)
-        
-        //view.bringSubviewToFront(addButton)
-//        view.addSubview(addButton)
-//        let addBottom = addButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -54)
-//        let addCenterX = addButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-        
-        NSLayoutConstraint.activate([tableTop, tableBottom, tableLeading, tableTrailing/*, doneCountLabelTop, doneCountLabelLeading, showHideDoneTasksButtonTop, showHideDoneTasksButtonTrailing, showHideDoneTasksButtonHeight, addBottom, addCenterX*/])
+        NSLayoutConstraint.activate([tableTop, tableBottom, tableLeading, tableTrailing])
     }
 
 }
 
 extension TaskListViewController: TaskListViewOutput {
+    func presentNewItem(_ item: ToDoItem?) {
+        let oneTaskViewController = OneTaskViewController(toDoItem: item)
+        let navigationController = UINavigationController(rootViewController: oneTaskViewController)
+     
+        present(navigationController, animated: true)
+    }
     
     func didSelectItem(_ item: ToDoItem?, onCellFrame: CGRect?, indexPath: IndexPath?) {
         let oneTaskController = OneTaskViewController(toDoItem: item)
@@ -130,5 +95,12 @@ extension TaskListViewController: TaskListViewOutput {
         navigationController.sourceFrame = onCellFrame
         navigationController.pushViewController(oneTaskController, animated: true)
     }
-    
 }
+
+//extension TaskListViewController: OneTaskViewControllerDelegate {
+//    func reloadData() {
+//        delegate?.reloadData()
+//    }
+//
+//
+//}

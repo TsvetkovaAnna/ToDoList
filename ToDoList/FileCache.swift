@@ -26,49 +26,48 @@ final class FileCache {
         return url.appendingPathComponent("ToDoItems.txt")
     }
     
-    private(set) var arrayToDoItems = [ToDoItem]()
+    private(set) var items = [ToDoItem]()
+    
     private var jsonPath: String? {
         Bundle.main.path(forResource: "fileJSON", ofType: "json")
     }
     
     func addItem(item: ToDoItem) {
-        arrayToDoItems.append(item)
+        items.append(item)
         saveData()
     }
     
     func deleteItem(byId: String) {
-        guard let index = arrayToDoItems.firstIndex(where: { $0.id == byId }) else { return }
-        arrayToDoItems.remove(at: index)
+        guard let index = items.firstIndex(where: { $0.id == byId }) else { return }
+        items.remove(at: index)
         saveData()
     }
     
     func refreshItem(_ item: ToDoItem, byId: String) {
         print(#function)
-        guard let index = arrayToDoItems.firstIndex(where: { $0.id == byId }) else { return }
-        arrayToDoItems[index] = item
-        //print(item.text)
-        DDLogInfo(item.text)
-        //print(arrayToDoItems)
-        DDLogInfo(arrayToDoItems)
+        guard let index = items.firstIndex(where: { $0.id == byId }) else { return }
+        items[index] = item
+        print(item.text)
+        print(items)
         saveData()
     }
     
     func saveData() {
         guard let cacheUrl = cacheUrl,
-              !arrayToDoItems.isEmpty,
-              let jsonData = ToDoItemList.json(fromItems: arrayToDoItems)
+              !items.isEmpty,
+              let jsonData = ToDoItemList.json(fromItems: items)
         else { return }
         
         fileManager.createFile(atPath: cacheUrl.path, contents: jsonData)
     }
     
     func loadLast() -> ToDoItem? {
-        arrayToDoItems.last
+        items.last
     }
     
     func loadData() {
         
-        var parsed: [ToDoItem]? = nil
+        var parsed: [ToDoItem]?
         
         parsed = parseCache()
         
@@ -79,7 +78,7 @@ final class FileCache {
         
         guard let parsedItems = parsed else { return }
         
-        arrayToDoItems = parsedItems
+        items = parsedItems
     }
     
 //    func checkData() -> [ToDoItem]? {

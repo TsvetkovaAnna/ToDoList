@@ -1,10 +1,3 @@
-//
-//  NewTableViewCell.swift
-//  YaToDoList
-//
-//  Created by Anna Tsvetkova on 06.08.2022.
-//
-
 import UIKit
 
 class NewTableViewCell: UITableViewCell {
@@ -17,7 +10,7 @@ class NewTableViewCell: UITableViewCell {
     
     private lazy var backView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+        view.backgroundColor = Constants.Colors.Back.secondaryElevated
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -34,9 +27,9 @@ class NewTableViewCell: UITableViewCell {
     private lazy var label: UILabel = {
         let label = UILabel()
         label.text = "Новое"
-        label.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
+        label.textColor = Constants.Colors.Label.tertiary
         label.backgroundColor = .clear
-        label.font = UIFont(name: "SFProText-Regular", size: 17)
+        label.font = Constants.Fonts.body
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -163,4 +156,3 @@ class NewTableViewCell: UITableViewCell {
         NSLayoutConstraint.activate([leftBV, rightBV, topBV, bottomBV, leftStackConct, rightStackConct, topStackConst, bottomStackConst])
     }
 }
-

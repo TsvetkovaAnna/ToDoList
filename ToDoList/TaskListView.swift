@@ -10,14 +10,15 @@ class TaskListView: UIView {
     private lazy var addButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .clear
-        button.setImage(UIImage(systemName: "plus.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 44, weight: .bold))?.withTintColor(UIColor.init(red: 0.0, green: 0.48, blue: 1.0, alpha: 1.0)), for: .normal)
+        button.setImage(Constants.Images.plusCircleFill, for: .normal)
+        button.addTarget(self, action: #selector(createNewTask), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
-        tableView.backgroundColor = .init(_colorLiteralRed: 0.97, green: 0.97, blue: 0.95, alpha: 1.0)
+        tableView.backgroundColor = Constants.Colors.Back.primary
         tableView.layer.cornerRadius = 16
         tableView.layer.borderColor = UIColor.white.cgColor
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -55,6 +56,11 @@ class TaskListView: UIView {
         self.removeGestureRecognizer(tapRecognizer)
     }*/
 
+    @objc private func createNewTask() {
+        let item = ToDoItem(text: "", importance: .basic, deadline: nil)
+        delegate?.presentNewItem(item)
+    }
+    
     func setupView() {
         
         self.addSubview(tableView)
@@ -79,8 +85,6 @@ extension TaskListView: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        //tableHeaderView.frame.height
-        //section == 0 ? tableHeaderView.frame.height : 0
         40
     }
     
@@ -97,10 +101,6 @@ extension TaskListView: UITableViewDataSource, UITableViewDelegate {
         let suitableCell = isLastCell(at: indexPath) ? newCell(indexPath) : taskCell(indexPath)
         
         guard let cell = suitableCell else { return defaultCell(indexPath) }
-        
-        /*let post = dataSource[indexPath.row]
-        let viewModel = ViewModel(author: post.author, image: post.image, description: post.description, likes: post.likes, views: post.views)
-        cell.setup(with: viewModel)*/
         
         return cell
     }
@@ -131,7 +131,7 @@ extension TaskListView: UITableViewDataSource, UITableViewDelegate {
         }
         
         deleteAction.image = UIImage(systemName: "trash")
-        deleteAction.backgroundColor = .red
+        deleteAction.backgroundColor = Constants.Colors.Color.red
         
         return UISwipeActionsConfiguration(actions: [deleteAction, deleteAction])
     }
@@ -143,7 +143,7 @@ extension TaskListView: UITableViewDataSource, UITableViewDelegate {
         }
         
         doneAction.image = UIImage(systemName: "checkmark.circle")
-        doneAction.backgroundColor = .green
+        doneAction.backgroundColor = Constants.Colors.Color.green
         
         return UISwipeActionsConfiguration(actions: [doneAction])
     }
@@ -157,7 +157,6 @@ extension TaskListView: UITableViewDataSource, UITableViewDelegate {
         
         delegate?.didSelectItem(item, onCellFrame: cell?.frame, indexPath: isLastCell ? nil : indexPath)
     }
-    
 }
 
 extension TaskListView: TaskListViewInput {
@@ -171,25 +170,28 @@ extension TaskListView: TaskListViewInput {
                 self.tableView.deleteRows(at: [deletingRow], with: .fade)
             }
         }
-        
+
         if let refreshingRow = refreshingRow {
             self.tableView.performBatchUpdates {
                 self.tableView.reloadRows(at: [refreshingRow], with: .fade)
             }
         }
-        
+
         if deletingRow == nil && refreshingRow == nil {
             self.tableView.performBatchUpdates {
                 self.tableView.reloadSections(IndexSet(integer: 0), with: .fade)
             }
         }
     }
-}
-
-//extension TaskListView: TaskTableViewCellDelegate, OneTaskViewControllerDelegate { //нужен ли?
+    
 //    func reloadData() {
+//        tableView.reloadData()
 //        print("should load")
 //    }
+}
+
+//extension TaskListView: /*TaskTableViewCellDelegate,*/ OneTaskViewControllerDelegate { //нужен ли?
+//
 //
 //    func openCurrentTask() {
 //        //let oneTaskController = OneTaskViewController()
