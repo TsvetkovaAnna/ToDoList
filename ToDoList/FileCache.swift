@@ -55,7 +55,7 @@ final class FileCache {
     
     func saveData() {
         guard let cacheUrl = cacheUrl,
-              arrayToDoItems.count > 0,
+              !arrayToDoItems.isEmpty,
               let jsonData = ToDoItemList.json(fromItems: arrayToDoItems)
         else { return }
         

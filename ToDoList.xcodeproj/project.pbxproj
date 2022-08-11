@@ -82,6 +82,7 @@
 		95563EC528A0626200ADA9E7 /* FileCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCache.swift; sourceTree = "<group>"; };
 		95563EC728A0629800ADA9E7 /* HeaderListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderListView.swift; sourceTree = "<group>"; };
 		95563EC928A062C100ADA9E7 /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
+		9585858A28A553EA00DFEEC4 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		95D84CA12896F1840001AE51 /* MathFunc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathFunc.swift; sourceTree = "<group>"; };
 		95D84CA32897243B0001AE51 /* IndentTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndentTextField.swift; sourceTree = "<group>"; };
 		994B28C1D598B8CA89219026 /* Pods_ToDoListTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ToDoListTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -145,6 +146,7 @@
 		951D37972894545700DA3BEC = {
 			isa = PBXGroup;
 			children = (
+				9585858A28A553EA00DFEEC4 /* .swiftlint.yml */,
 				951D37D92895C41300DA3BEC /* .gitignore */,
 				951D37A22894545800DA3BEC /* ToDoList */,
 				951D37B92894546000DA3BEC /* ToDoListTests */,

@@ -158,7 +158,7 @@ class NewTableViewCell: UITableViewCell {
 //        let widthButton = chevronButton.widthAnchor.constraint(equalToConstant: 6.95)
 //        let heightButton = chevronButton.heightAnchor.constraint(equalToConstant: 11.9)Y
         
-        //leadingLabel, trailingLabel, centerYLabel, topLabel,
+        // leadingLabel, trailingLabel, centerYLabel, topLabel,
        
         NSLayoutConstraint.activate([leftBV, rightBV, topBV, bottomBV, leftStackConct, rightStackConct, topStackConst, bottomStackConst])
     }

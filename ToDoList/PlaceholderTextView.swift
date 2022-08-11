@@ -13,7 +13,7 @@ class PlaceholderTextView: UITextView, UITextViewDelegate {
     var changedClosure: (() -> Void)?
     
     var isEmpty: Bool {
-        text.count == 0 || isPlaceholderState
+        text.isEmpty || isPlaceholderState
     }
     
     var isPlaceholderState: Bool {
@@ -73,7 +73,7 @@ class PlaceholderTextView: UITextView, UITextViewDelegate {
 
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         print(text.count)
-        text.count > 0 ? setTextViewReady() : checkForPlaceholder()
+        !text.isEmpty ? setTextViewReady() : checkForPlaceholder()
         
         return true
     }

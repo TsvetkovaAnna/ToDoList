@@ -1,4 +1,3 @@
-
 import UIKit
 
 struct ToDoItemList {
@@ -43,7 +42,6 @@ enum ImportanceEnum: String {
 }
 
 struct ToDoItem: Equatable {
-    
     
     let id: String
     let text: String
@@ -95,7 +93,6 @@ extension ToDoItem {
         dict["dateChanged"] = dateChanged?.timeIntervalSince1970
         return dict
     }
-    
     
     static func parse(json: [String: Any]) -> ToDoItem? {
        ToDoItem(dict: json)
@@ -166,14 +163,14 @@ extension ToDoItem {
 //        arrayToDoItems = parsedItems
 //    }
 //
-////    func checkData() -> [ToDoItem]? {
-////        guard let path = jsonPath else { return nil }
-////        return parseFromFile(pathForFile: path)
-////    }
-////
-////    var checkTodoItems: [ToDoItem] {
-////        arrayToDoItems
-////    }
+//    func checkData() -> [ToDoItem]? {
+//        guard let path = jsonPath else { return nil }
+//        return parseFromFile(pathForFile: path)
+//    }
+//
+//    var checkTodoItems: [ToDoItem] {
+//        arrayToDoItems
+//    }
 //
 //    func parseCache() -> [ToDoItem]? {
 //
@@ -208,4 +205,3 @@ extension ToDoItem {
 //    }
 //
 //}
-

@@ -1,11 +1,9 @@
-
-
 import UIKit
 import CocoaLumberjack
 
-protocol OneTaskViewControllerDelegate {
-    func reloadData()
-}
+// protocol OneTaskViewControllerDelegate {
+//     func reloadData()
+// }
 
 final class OneTaskViewController: UIViewController {
 
@@ -37,7 +35,7 @@ final class OneTaskViewController: UIViewController {
     
     private lazy var saveBarButton: UIBarButtonItem = {
         let barButton = UIBarButtonItem(title: "Сохранить", style: .plain, target: self, action: #selector(saveToDo))
-        barButton.tintColor = textView.text == "" ? .init(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.3) : .init(red: 0.0, green: 0.48, blue: 1.0, alpha: 1.0)
+        barButton.tintColor = textView.isEmpty ? .init(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.3) : .init(red: 0.0, green: 0.48, blue: 1.0, alpha: 1.0)
         return barButton
     }()
     
@@ -191,7 +189,6 @@ final class OneTaskViewController: UIViewController {
         return label
     }()
     
-    
     var segmentItems = [UIImage(systemName: "arrow.down")?.withTintColor(.gray, renderingMode: .alwaysOriginal) ?? "<-", "нет", UIImage(systemName: "exclamationmark.2", withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .bold))?.withTintColor(.red, renderingMode: .alwaysOriginal) ?? "!!"] as [Any]
     
     private lazy var segment: UISegmentedControl = {
@@ -242,7 +239,6 @@ final class OneTaskViewController: UIViewController {
         calendar.tintColor = .init(red: 0.0, green: 0.48, blue: 1.0, alpha: 1.0)
         return calendar
     }()
-    
     
     init(toDoItem: ToDoItem?) {
         self.toDo = toDoItem
@@ -457,7 +453,6 @@ final class OneTaskViewController: UIViewController {
     }
     
     
-    
     @objc func switchDeadline() {
         
         if calendar.isHidden {
@@ -474,12 +469,8 @@ final class OneTaskViewController: UIViewController {
 //            //calendar.date = Date(timeIntervalSinceNow: 24*60*60)
 //        }
 
-        
         separatorCalendar.isHidden.toggle()
         calendar.isHidden.toggle()
     }
 
 }
-
-
-
