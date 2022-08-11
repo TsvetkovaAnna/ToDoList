@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,17 +15,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-//        let cacher = FileCache()
-//
-//        cacher.loadData()
-//        print("FirstText:", cacher.checkTodoItems[0].text)
-//        //print("FirstText:", cacher.checkTodoItems[0].deadline)
-//        print("FirstText:", cacher.checkTodoItems[0].dateCreated)
-//        cacher.deleteItem(byId: "Mama")
-//        cacher.loadData()
-//        print("FirstText:", cacher.checkTodoItems[0].text)
-//        //print("FirstText:", cacher.checkTodoItems[0].deadline)
-//        print("FirstText:", cacher.checkTodoItems[0].dateCreated)
+        DDLog.add(DDOSLogger.sharedInstance)
+        
+        let fileLogger: DDFileLogger = DDFileLogger()
+        fileLogger.rollingFrequency = 60 * 60 * 24
+        fileLogger.logFileManager.maximumNumberOfLogFiles = 10
+        DDLog.add(fileLogger)
+        print(fileLogger.logFileManager.sortedLogFilePaths)
+        
         return true
     }
 

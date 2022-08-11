@@ -1,6 +1,7 @@
 
 
 import UIKit
+import CocoaLumberjack
 
 protocol TaskListViewInput: AnyObject {
     func update(with items: [ToDoItem], deletingRow: IndexPath?, refreshingRow: IndexPath?)
@@ -78,7 +79,8 @@ final class TaskListViewController: UIViewController {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.prefersLargeTitles = true
         
-        print("update", lastIndexPath, "\n", self.fileCache.arrayToDoItems)
+        //print("updating at", lastIndexPath ?? "(no index)")
+        DDLogInfo("updating at \(String(describing: lastIndexPath))")
         fileCache.loadData()
         self.delegate?.update(with: self.fileCache.arrayToDoItems, deletingRow: nil, refreshingRow: lastIndexPath)
     }

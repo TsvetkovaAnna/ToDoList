@@ -1,6 +1,7 @@
 
 
 import UIKit
+import CocoaLumberjack
 
 protocol OneTaskViewControllerDelegate {
     func reloadData()
@@ -76,7 +77,8 @@ final class OneTaskViewController: UIViewController {
     }()
     
     @objc func setupSaveButton() {
-        print("empty", self.textView.isEmpty)
+        //print("empty", self.textView.isEmpty)
+        DDLogInfo("empty \(self.textView.isEmpty)")
         saveBarButton.isEnabled = !textView.isEmpty && !isCurrentSame
     }
     
@@ -265,7 +267,8 @@ final class OneTaskViewController: UIViewController {
             calendar.date = deadline
         }
         
-        print("empty", self.textView.isEmpty)
+        //print("empty", self.textView.isEmpty)
+        DDLogInfo("empty \(self.textView.isEmpty)")
         self.setupSaveButton()
         
         segment.selectedSegmentIndex = 1

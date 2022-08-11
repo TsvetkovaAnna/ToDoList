@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 final class FileCache {
     
@@ -45,8 +46,10 @@ final class FileCache {
         print(#function)
         guard let index = arrayToDoItems.firstIndex(where: { $0.id == byId }) else { return }
         arrayToDoItems[index] = item
-        print(item.text)
-        print(arrayToDoItems)
+        //print(item.text)
+        DDLogInfo(item.text)
+        //print(arrayToDoItems)
+        DDLogInfo(arrayToDoItems)
         saveData()
     }
     
