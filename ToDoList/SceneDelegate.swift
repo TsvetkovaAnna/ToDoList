@@ -18,10 +18,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         //let navigationController = UINavigationController()
-        let taskNavigationController = UINavigationController(rootViewController: TaskViewController())
+        let fileCache = FileCache()
+        let taskListViewController = TaskListViewController(fileCache: fileCache)
+        //let tasksNavigationController = UINavigationController(rootViewController: taskListViewController)
+        let transitionNavigationController = TransitionNavigationController(rootViewController: taskListViewController)
+        //let oneTaskNavigationController = UINavigationController(rootViewController: OneTaskViewController())
         //navigationController.viewControllers = [taskNavigationController]
 
-        window?.rootViewController = taskNavigationController//navigationController//TaskViewController()
+        window?.rootViewController = transitionNavigationController//tasksNavigationController //oneTaskNavigationController//navigationController//TaskViewController()
         window?.makeKeyAndVisible()
     }
 
