@@ -7,7 +7,12 @@ protocol TaskListViewInput: AnyObject {
 
 protocol TaskListViewOutput: AnyObject {
     func didSelectItem(_ item: ToDoItem?, onCellFrame: CGRect?, indexPath: IndexPath?)
-    func presentNewItem(_ item: ToDoItem?)
+    func presentNewItem()
+}
+
+enum UpdateType {
+    case refresh
+    case remove
 }
 
 final class TaskListViewController: UIViewController {
@@ -19,7 +24,7 @@ final class TaskListViewController: UIViewController {
     private var lastIndexPath: IndexPath?
     
     private lazy var viewTable: TaskListView = {
-        print(fileCache.items.map({ $0.text}))
+        print("initing tv with", fileCache.items.map({ $0.importance}))
         let view = TaskListView(frame: .zero, todoItems: fileCache.items, deleteAction: { indexPath in
             let item = self.fileCache.items[indexPath.row]
             self.fileCache.deleteItem(byId: item.id)
@@ -50,17 +55,25 @@ final class TaskListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        
-        DDLogInfo("updating at \(String(describing: lastIndexPath))")
-        fileCache.loadData()
-        //print("update", lastIndexPath, "\n", self.fileCache.items)
-        //self.delegate?.update(with: self.fileCache.items, deletingRow: lastIndexPath, refreshingRow: lastIndexPath)
-        self.delegate?.update(with: self.fileCache.items, deletingRow: nil, refreshingRow: lastIndexPath)
+        // updateTableView()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.navigationBar.prefersLargeTitles = false
+    }
+    
+    func updateTableView(_ type: UpdateType) {
+        
+        DDLogInfo("updating at \(String(describing: lastIndexPath))")
+        fileCache.loadData()
+        
+        switch type {
+        case .refresh:
+            delegate?.update(with: fileCache.items, deletingRow: nil, refreshingRow: lastIndexPath)
+        case .remove:
+            delegate?.update(with: fileCache.items, deletingRow: lastIndexPath, refreshingRow: nil)
+        }
     }
     
     private func setupView() {
@@ -80,20 +93,40 @@ final class TaskListViewController: UIViewController {
 
 }
 
-extension TaskListViewController: TaskListViewOutput {
-    func presentNewItem(_ item: ToDoItem?) {
-        let oneTaskViewController = OneTaskViewController(toDoItem: item)
-        let navigationController = UINavigationController(rootViewController: oneTaskViewController)
-     
-        present(navigationController, animated: true)
+extension TaskListViewController: TaskListViewOutput, OneTaskViewControllerDelegate {
+    
+    func updateTableViewDeletingRow() {
+        updateTableView(.remove)
+    }
+    
+    func willDismiss() {
+        print(#function)
+        updateTableView(.refresh)
+    }
+    
+    func presentNewItem() {
+        lastIndexPath = nil
+        openTask(nil)
     }
     
     func didSelectItem(_ item: ToDoItem?, onCellFrame: CGRect?, indexPath: IndexPath?) {
-        let oneTaskController = OneTaskViewController(toDoItem: item)
         lastIndexPath = indexPath
-        guard let navigationController = navigationController as? TransitionNavigationController else { return }
-        navigationController.sourceFrame = onCellFrame
-        navigationController.pushViewController(oneTaskController, animated: true)
+        openTask(item)
+    }
+    
+    func openTask(_ item: ToDoItem?) {
+        let oneTaskController = OneTaskViewController(toDoItem: item)
+        oneTaskController.delegate = self
+        
+//        guard let transitioningDelegate = navigationController as? TransitionNavigationController else { return }
+//        transitioningDelegate.sourceFrame = onCellFrame
+//        transitioningDelegate.pushViewController(oneTaskController, animated: true)
+//
+//        oneTaskController.transitioningDelegate = transitioningDelegate
+//        oneTaskController.modalPresentationStyle = .custom
+        
+        let navigationController = UINavigationController(rootViewController: oneTaskController)
+        present(navigationController, animated: true)
     }
 }
 

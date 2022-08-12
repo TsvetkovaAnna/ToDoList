@@ -30,7 +30,7 @@ struct ToDoItem: Equatable {
         
         self.id = dict["id"] as? String ?? UUID().uuidString
         self.text = dict["text"] as? String ?? ""
-        self.importance = dict["importance"] as? Importance ?? Importance.basic
+        self.importance = Importance(rawValue: (dict["importance"] as? String) ?? "basic") ?? Importance.basic
         self.isDone = dict["toDoDone"] as? Bool ?? false
         
         func dateByKey(_ key: String) -> Date? {
@@ -51,7 +51,7 @@ extension ToDoItem {
         var dict: [String: Any] = [:]
         dict["id"] = id
         dict["text"] = text
-        if importance != .basic { dict["importance"] = importance.rawValue }
+        if importance != .basic { dict["importance"] = importance.rawValue; print("importance.rawValue", importance.rawValue) }
         if let deadline = deadline { dict["deadline"] = deadline.timeIntervalSince1970 }
         dict["toDoDone"] = isDone
         dict["dateCreated"] = dateCreated.timeIntervalSince1970

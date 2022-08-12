@@ -46,6 +46,7 @@ class TaskListView: UIView {
         self.deleteAction = deleteAction
         super.init(frame: frame)
         setupView()
+        print("init items: \(todoItems)")
         //self.addGestureRecognizer(tapRecognizer)
     }
     
@@ -57,8 +58,7 @@ class TaskListView: UIView {
     }*/
 
     @objc private func createNewTask() {
-        let item = ToDoItem(text: "", importance: .basic, deadline: nil)
-        delegate?.presentNewItem(item)
+        delegate?.presentNewItem()
     }
     
     func setupView() {
@@ -154,7 +154,7 @@ extension TaskListView: UITableViewDataSource, UITableViewDelegate {
         let item = isLastCell(at: indexPath) ? nil : todoItems[indexPath.row]
         
         let isLastCell = self.tableView(tableView, numberOfRowsInSection: 0) == indexPath.row + 1
-        
+        print("didselect row item\(item?.importance)\n \(todoItems)")
         delegate?.didSelectItem(item, onCellFrame: cell?.frame, indexPath: isLastCell ? nil : indexPath)
     }
 }
@@ -162,7 +162,8 @@ extension TaskListView: UITableViewDataSource, UITableViewDelegate {
 extension TaskListView: TaskListViewInput {
     
     func update(with items: [ToDoItem], deletingRow: IndexPath?, refreshingRow: IndexPath?) {
-        
+        print(#function)
+        print("rows:", deletingRow, refreshingRow)
         todoItems = items
         
         if let deletingRow = deletingRow {
@@ -178,6 +179,7 @@ extension TaskListView: TaskListViewInput {
         }
 
         if deletingRow == nil && refreshingRow == nil {
+            print("both nil")
             self.tableView.performBatchUpdates {
                 self.tableView.reloadSections(IndexSet(integer: 0), with: .fade)
             }

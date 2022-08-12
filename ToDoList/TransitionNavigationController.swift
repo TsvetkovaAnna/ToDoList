@@ -1,6 +1,6 @@
 import UIKit
 
-class TransitionNavigationController: UINavigationController {
+class TransitionNavigationController: UINavigationController, UIViewControllerTransitioningDelegate {
     
     var sourceFrame: CGRect?
     
@@ -14,6 +14,7 @@ class TransitionNavigationController: UINavigationController {
 }
 
 extension TransitionNavigationController: UINavigationControllerDelegate {
+    
     func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         
         let statusBarHeight = view.window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0

@@ -1,8 +1,11 @@
 import UIKit
 import CocoaLumberjack
-//protocol OneTaskViewControllerDelegate {
-//    func reloadData()
-//}
+
+protocol OneTaskViewControllerDelegate: AnyObject {
+    //func reloadData()
+    func willDismiss()
+    func updateTableViewDeletingRow()
+}
 
 final class OneTaskViewController: UIViewController {
 
@@ -16,7 +19,7 @@ final class OneTaskViewController: UIViewController {
     
     //private var deadlineHorizontalStackHeight: NSLayoutConstraint?
     
-    //*weak*/ var delegate: OneTaskViewControllerDelegate?
+    weak var delegate: OneTaskViewControllerDelegate?
     
     private lazy var tapRecognizer: UITapGestureRecognizer = {
         UITapGestureRecognizer(target: self, action: #selector(viewTapped))
@@ -42,6 +45,8 @@ final class OneTaskViewController: UIViewController {
         default:
             importance = .basic
         }
+        
+        print("importance:", importance)
         
         let deadline = switcher.isOn ? calendar.date : nil
         
@@ -259,10 +264,11 @@ final class OneTaskViewController: UIViewController {
         DDLogInfo("empty \(self.textView.isEmpty)")
         self.setupSaveButton()
         
+        print("toDo?.importance", toDo?.importance)
         segment.selectedSegmentIndex = 1
-
+        
         guard let toDo = toDo else { return }
-
+        
         switch toDo.importance {
         case .low:
             segment.selectedSegmentIndex = 0
@@ -271,6 +277,7 @@ final class OneTaskViewController: UIViewController {
         case .important:
             segment.selectedSegmentIndex = 2
         }
+        print("toDo?.importance", toDo.importance)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -402,7 +409,11 @@ final class OneTaskViewController: UIViewController {
     
     @objc private func close() {
         //returnToTaskList()
-        navigationController?.popViewController(animated: true)
+        //navigationController?.popViewController(animated: true)
+        
+        print("delegate?.willDismiss(), delegate = ", delegate)
+        delegate?.willDismiss()
+        dismiss(animated: true)
     }
     
     @objc private func saveToDo() {
@@ -415,14 +426,17 @@ final class OneTaskViewController: UIViewController {
             cache.addItem(item: currentToDo)
         }
         
-        navigationController?.popViewController(animated: true)
+        print(#function)
+        
+        close()
     }
     
     @objc private func didTapDeleteButton() {
+        
         guard let id = toDo?.id else { return }
         cache.deleteItem(byId: id)
-        
-        navigationController?.popViewController(animated: true)
+        delegate?.updateTableViewDeletingRow()
+        close()
     }
     
     @objc private func setDeadlineDate(_: AnyObject/*calend: UIDatePicker*/) {
