@@ -123,20 +123,27 @@ extension TaskListView: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
+        let editAction = UIContextualAction(style: .normal, title: nil) { (_, _, completion) in
+            self.tableView(tableView, didSelectRowAt: indexPath)
+            completion(true)
+        }
+        
+        editAction.image = UIImage(systemName: "info.circle")
+        editAction.backgroundColor = Constants.Colors.Color.gray
+        
         let deleteAction = UIContextualAction(style: .destructive, title: nil) { (_, _, completion) in
-            
             self.deleteAction(indexPath)
-            
             completion(true)
         }
         
         deleteAction.image = UIImage(systemName: "trash")
         deleteAction.backgroundColor = Constants.Colors.Color.red
         
-        return UISwipeActionsConfiguration(actions: [deleteAction, deleteAction])
+        return UISwipeActionsConfiguration(actions: [deleteAction, editAction])
     }
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
         let doneAction = UIContextualAction(style: .normal, title: nil) { (_, _, completion) in
             
             completion(true)
@@ -163,7 +170,7 @@ extension TaskListView: TaskListViewInput {
     
     func update(with items: [ToDoItem], deletingRow: IndexPath?, refreshingRow: IndexPath?) {
         print(#function)
-        print("rows:", deletingRow, refreshingRow)
+        print("rows:", deletingRow ?? "deleting nil", refreshingRow ?? "refreshing nil")
         todoItems = items
         
         if let deletingRow = deletingRow {

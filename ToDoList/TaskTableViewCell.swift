@@ -3,6 +3,11 @@ import UIKit
 //protocol TaskTableViewCellDelegate: AnyObject {
 //    func openCurrentTask()
 //}
+enum CircleState {
+    case notDone
+    case done
+    case passedDeadline
+}
 
 class TaskTableViewCell: UITableViewCell {
 
@@ -31,7 +36,7 @@ class TaskTableViewCell: UITableViewCell {
     private lazy var labelExclamationHorizontalStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
-        stack.alignment = .top
+        stack.alignment = .center
         stack.distribution = .fillProportionally
         stack.setContentCompressionResistancePriority(UILayoutPriority(1000), for: .vertical)
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -40,7 +45,9 @@ class TaskTableViewCell: UITableViewCell {
     
     private lazy var label: UILabel = {
         let label = UILabel()
-        label.text = "Новое"
+        //label.text = "Новое"
+        label.lineBreakMode = .byWordWrapping
+        label.numberOfLines = 3
         label.textColor = Constants.Colors.Label.primary
         label.backgroundColor = .clear
         label.font = Constants.Fonts.body
@@ -62,8 +69,9 @@ class TaskTableViewCell: UITableViewCell {
     private lazy var deadlineHorizontalStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
-        stack.alignment = .top
-        stack.distribution = .fillProportionally
+        stack.alignment = .leading
+        //stack.spacing = 3.5
+        stack.distribution = .fill
         stack.setContentCompressionResistancePriority(UILayoutPriority(1000), for: .vertical)
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
@@ -88,8 +96,17 @@ class TaskTableViewCell: UITableViewCell {
         return label
     }()
     
+    private func makeCircleImage(state: CircleState) -> UIImageView {
+        let image = UIImageView()
+        image.backgroundColor = Constants.Colors.Back.secondaryElevated
+        image.tag = tag
+        image.translatesAutoresizingMaskIntoConstraints = false
+        return image
+    }
+    
     private lazy var circleImage: UIImageView = {
         let image = UIImageView()
+        image.backgroundColor = Constants.Colors.Back.secondaryElevated
         image.image = Constants.Images.circleGray
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
@@ -124,6 +141,22 @@ class TaskTableViewCell: UITableViewCell {
         exclamationMark.isHidden = !(item.importance == .important)
         guard let textDeadline = deadlineLabel.text else { return }
         calendarImage.isHidden = textDeadline.isEmpty
+        
+        let state: CircleState
+        if let date = item.deadline, date > Date.now {
+            state = .passedDeadline
+        } else {
+            state = item.isDone ? .done : .notDone
+        }
+        
+        switch state {
+        case .passedDeadline:
+            circleImage.image = Constants.Images.circleRed
+        case .notDone:
+            circleImage.image = Constants.Images.circleGray
+        case .done:
+            circleImage.image = Constants.Images.circleGreen
+        }
     }
     
     override func prepareForReuse() {
@@ -156,7 +189,7 @@ class TaskTableViewCell: UITableViewCell {
         labelDeadlineVerticalStack.addArrangedSubview(deadlineHorizontalStack)
         
         labelExclamationHorizontalStack.addArrangedSubview(exclamationMark)
-        let markHeight = exclamationMark.heightAnchor.constraint(equalToConstant: 30)
+        let markHeight = exclamationMark.heightAnchor.constraint(equalToConstant: 16)
         labelExclamationHorizontalStack.addArrangedSubview(label)
         
         deadlineHorizontalStack.addArrangedSubview(calendarImage)

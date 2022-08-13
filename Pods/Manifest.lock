@@ -2,21 +2,25 @@ PODS:
   - CocoaLumberjack/Core (3.7.4)
   - CocoaLumberjack/Swift (3.7.4):
     - CocoaLumberjack/Core
+  - ReachabilitySwift (5.0.0)
   - SwiftLint (0.48.0)
 
 DEPENDENCIES:
   - CocoaLumberjack/Swift
+  - ReachabilitySwift
   - SwiftLint
 
 SPEC REPOS:
   trunk:
     - CocoaLumberjack
+    - ReachabilitySwift
     - SwiftLint
 
 SPEC CHECKSUMS:
   CocoaLumberjack: 543c79c114dadc3b1aba95641d8738b06b05b646
+  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   SwiftLint: 284cea64b6187c5d6bd83e9a548a64104d546447
 
-PODFILE CHECKSUM: ffb5e5fad83eeb46f35f57a4ccce8a2e9d546c5e
+PODFILE CHECKSUM: c0ab193f84678ea862746534dbb7aeb0d8c214c7
 
 COCOAPODS: 1.8.4

@@ -219,6 +219,7 @@ final class OneTaskViewController: UIViewController {
         button.setTitle("Удалить", for: .normal)
         button.addTarget(self, action: #selector(didTapDeleteButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.isEnabled = toDo != nil
         return button
     }()
     
@@ -264,7 +265,7 @@ final class OneTaskViewController: UIViewController {
         DDLogInfo("empty \(self.textView.isEmpty)")
         self.setupSaveButton()
         
-        print("toDo?.importance", toDo?.importance)
+        print("toDo?.importance", toDo?.importance ?? "nil")
         segment.selectedSegmentIndex = 1
         
         guard let toDo = toDo else { return }
@@ -304,7 +305,8 @@ final class OneTaskViewController: UIViewController {
         else { return }
         
         let offsetY = keyboardFrameValue.cgRectValue.height
-        scrollView.setContentOffset(CGPoint(x: 0, y: offsetY), animated: true)
+        //scrollView.setContentOffset(CGPoint(x: 0, y: offsetY), animated: true)
+        scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
     }
     
     @objc private func keyboardDidHide(_ notification: Notification) {
@@ -411,7 +413,7 @@ final class OneTaskViewController: UIViewController {
         //returnToTaskList()
         //navigationController?.popViewController(animated: true)
         
-        print("delegate?.willDismiss(), delegate = ", delegate)
+        print("delegate?.willDismiss(), delegate = ", delegate ?? "nil")
         delegate?.willDismiss()
         dismiss(animated: true)
     }

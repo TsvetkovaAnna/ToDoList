@@ -30,6 +30,11 @@
 		95563EC828A0629800ADA9E7 /* HeaderListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95563EC728A0629800ADA9E7 /* HeaderListView.swift */; };
 		95563ECA28A062C100ADA9E7 /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95563EC928A062C100ADA9E7 /* DateExtension.swift */; };
 		9585858C28A55C7E00DFEEC4 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9585858B28A55C7E00DFEEC4 /* Constants.swift */; };
+		9585858E28A68B9600DFEEC4 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9585858D28A68B9600DFEEC4 /* NetworkService.swift */; };
+		9585859028A68CB400DFEEC4 /* FileCacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9585858F28A68CB400DFEEC4 /* FileCacheService.swift */; };
+		9585859228A68FD200DFEEC4 /* MockFileCacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9585859128A68FD200DFEEC4 /* MockFileCacheService.swift */; };
+		9585859428A6969200DFEEC4 /* MockNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9585859328A6969200DFEEC4 /* MockNetworkService.swift */; };
+		9585859628A7DB5000DFEEC4 /* GeneralMockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9585859528A7DB5000DFEEC4 /* GeneralMockService.swift */; };
 		95D84CA22896F1840001AE51 /* MathFunc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D84CA12896F1840001AE51 /* MathFunc.swift */; };
 		95D84CA42897243B0001AE51 /* IndentTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D84CA32897243B0001AE51 /* IndentTextField.swift */; };
 		B49EB543566BD06D8A9BF2D6 /* Pods_ToDoList.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20E3E7824EBA908152CDDD07 /* Pods_ToDoList.framework */; };
@@ -85,6 +90,11 @@
 		95563EC928A062C100ADA9E7 /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
 		9585858A28A553EA00DFEEC4 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		9585858B28A55C7E00DFEEC4 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		9585858D28A68B9600DFEEC4 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
+		9585858F28A68CB400DFEEC4 /* FileCacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCacheService.swift; sourceTree = "<group>"; };
+		9585859128A68FD200DFEEC4 /* MockFileCacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFileCacheService.swift; sourceTree = "<group>"; };
+		9585859328A6969200DFEEC4 /* MockNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNetworkService.swift; sourceTree = "<group>"; };
+		9585859528A7DB5000DFEEC4 /* GeneralMockService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralMockService.swift; sourceTree = "<group>"; };
 		95D84CA12896F1840001AE51 /* MathFunc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathFunc.swift; sourceTree = "<group>"; };
 		95D84CA32897243B0001AE51 /* IndentTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndentTextField.swift; sourceTree = "<group>"; };
 		994B28C1D598B8CA89219026 /* Pods_ToDoListTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ToDoListTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -174,6 +184,11 @@
 			children = (
 				951D37A32894545800DA3BEC /* AppDelegate.swift */,
 				951D37A52894545800DA3BEC /* SceneDelegate.swift */,
+				9585858D28A68B9600DFEEC4 /* NetworkService.swift */,
+				9585858F28A68CB400DFEEC4 /* FileCacheService.swift */,
+				9585859328A6969200DFEEC4 /* MockNetworkService.swift */,
+				9585859128A68FD200DFEEC4 /* MockFileCacheService.swift */,
+				9585859528A7DB5000DFEEC4 /* GeneralMockService.swift */,
 				951D37A72894545800DA3BEC /* OneTaskViewController.swift */,
 				95563EB728A0613700ADA9E7 /* PlaceholderTextView.swift */,
 				95563EB928A0616300ADA9E7 /* TaskListViewController.swift */,
@@ -472,10 +487,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9585859628A7DB5000DFEEC4 /* GeneralMockService.swift in Sources */,
 				95563ECA28A062C100ADA9E7 /* DateExtension.swift in Sources */,
 				9585858C28A55C7E00DFEEC4 /* Constants.swift in Sources */,
 				95563EC228A0622300ADA9E7 /* TaskTableViewCell.swift in Sources */,
 				951D37A82894545800DA3BEC /* OneTaskViewController.swift in Sources */,
+				9585858E28A68B9600DFEEC4 /* NetworkService.swift in Sources */,
+				9585859228A68FD200DFEEC4 /* MockFileCacheService.swift in Sources */,
+				9585859028A68CB400DFEEC4 /* FileCacheService.swift in Sources */,
 				95D84CA22896F1840001AE51 /* MathFunc.swift in Sources */,
 				95563EC428A0623E00ADA9E7 /* NewTableViewCell.swift in Sources */,
 				951D37D42894608800DA3BEC /* ToDoItemModel.swift in Sources */,
@@ -484,6 +503,7 @@
 				95563EBA28A0616300ADA9E7 /* TaskListViewController.swift in Sources */,
 				95563EBE28A061D100ADA9E7 /* CellExpandingAnimator.swift in Sources */,
 				951D37A42894545800DA3BEC /* AppDelegate.swift in Sources */,
+				9585859428A6969200DFEEC4 /* MockNetworkService.swift in Sources */,
 				951D37A62894545800DA3BEC /* SceneDelegate.swift in Sources */,
 				95563EB828A0613700ADA9E7 /* PlaceholderTextView.swift in Sources */,
 				95563EC628A0626200ADA9E7 /* FileCache.swift in Sources */,

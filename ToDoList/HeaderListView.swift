@@ -5,6 +5,7 @@ class HeaderListView: UIView {
     private lazy var doneLabelButtonHorizontalStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
+        stack.alignment = .center
         stack.distribution = .fillEqually
         stack.backgroundColor = Constants.Colors.Back.primary
         stack.translatesAutoresizingMaskIntoConstraints = false

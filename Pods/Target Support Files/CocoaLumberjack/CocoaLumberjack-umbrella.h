@@ -10,6 +10,7 @@
 #endif
 #endif
 
+#import "CLIColor 2.h"
 #import "CLIColor.h"
 #import "DDAbstractDatabaseLogger.h"
 #import "DDASLLogCapture.h"
@@ -27,8 +28,10 @@
 #import "DDMultiFormatter.h"
 #import "DDOSLogger.h"
 #import "DDTTYLogger.h"
+#import "CocoaLumberjack 2.h"
 #import "CocoaLumberjack.h"
 #import "DDLegacyMacros.h"
+#import "SwiftLogLevel 2.h"
 #import "SwiftLogLevel.h"
 
 FOUNDATION_EXPORT double CocoaLumberjackVersionNumber;
