@@ -2,25 +2,30 @@ import Foundation
 
 class MockFileCacheService: FileCacheService {
     
-    func save(to file: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        <#code#>
+    let fileCache = FileCache()
+    
+    func save(to file: String, completion: @escaping ([ToDoItem]) -> Void) {
+        fileCache.saveData(URL(string: file))
+        fileCache.loadData(URL(string: file))
+        completion(fileCache.items)
     }
     
-    func load(from file: String, completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
-        <#code#>
+    func load(from file: String, completion: @escaping ([ToDoItem]) -> Void) {
+        fileCache.loadData(URL(string: file))
+        completion(fileCache.items)
     }
     
     func add(_ newItem: ToDoItem) {
-        <#code#>
+        fileCache.addItem(item: newItem)
     }
     
     func delete(id: String) {
-        <#code#>
+        fileCache.deleteItem(byId: id)
     }
     
 }
 
-class MockFileCacheService2: FileCacheService {
+class MockFileCacheService2 {
     
     let fileCache = FileCache()
     

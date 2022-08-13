@@ -143,7 +143,7 @@ class TaskTableViewCell: UITableViewCell {
         calendarImage.isHidden = textDeadline.isEmpty
         
         let state: CircleState
-        if let date = item.deadline, date > Date.now {
+        if let deadline = item.deadline, deadline < Date.now {
             state = .passedDeadline
         } else {
             state = item.isDone ? .done : .notDone

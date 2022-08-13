@@ -22,11 +22,14 @@ final class FileCache {
     
     private var cacheUrl: URL? {
         guard let url = docUrl else { return nil }
-        print(url)
         return url.appendingPathComponent("ToDoItems.txt")
     }
     
-    private(set) var items = [ToDoItem]()
+    private(set) var items = [ToDoItem]() {
+        didSet {
+            saveData()
+        }
+    }
     
     private var jsonPath: String? {
         Bundle.main.path(forResource: "fileJSON", ofType: "json")
@@ -34,26 +37,20 @@ final class FileCache {
     
     func addItem(item: ToDoItem) {
         items.append(item)
-        saveData()
     }
     
     func deleteItem(byId: String) {
         guard let index = items.firstIndex(where: { $0.id == byId }) else { return }
         items.remove(at: index)
-        saveData()
     }
     
     func refreshItem(_ item: ToDoItem, byId: String) {
-        print(#function)
         guard let index = items.firstIndex(where: { $0.id == byId }) else { return }
         items[index] = item
-        print(item.text)
-        print(items)
-        saveData()
     }
     
-    func saveData() {
-        guard let cacheUrl = cacheUrl,
+    func saveData(_ toURL: URL? = nil) {
+        guard let cacheUrl = toURL ?? cacheUrl,
               !items.isEmpty,
               let jsonData = ToDoItemList.json(fromItems: items)
         else { return }
@@ -65,11 +62,11 @@ final class FileCache {
         items.last
     }
     
-    func loadData() {
+    func loadData(_ fromURL: URL? = nil) {
         
         var parsed: [ToDoItem]?
         
-        parsed = parseCache()
+        parsed = parseCache(fromURL)
         
         if parsed == nil {
             guard let path = jsonPath else { return }
@@ -90,9 +87,9 @@ final class FileCache {
 //        arrayToDoItems
 //    }
     
-    func parseCache() -> [ToDoItem]? {
+    func parseCache(_ fromURL: URL? = nil) -> [ToDoItem]? {
         
-        guard let cacheUrl = cacheUrl else { return nil }
+        guard let cacheUrl = fromURL ?? cacheUrl else { return nil }
         
         do {
             let cacheData = try Data(contentsOf: cacheUrl)

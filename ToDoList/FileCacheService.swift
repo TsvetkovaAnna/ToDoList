@@ -10,12 +10,12 @@ import Foundation
 protocol FileCacheService {
     func save(
         to file: String,
-        completion: @escaping (Result<Void, Error>) -> Void
+        completion: @escaping ([ToDoItem]) -> Void
     )
     
     func load(
         from file: String,
-        completion: @escaping (Result<[ToDoItem], Error>) -> Void
+        completion: @escaping ([ToDoItem]) -> Void
     )
     
     func add(_ newItem: ToDoItem)

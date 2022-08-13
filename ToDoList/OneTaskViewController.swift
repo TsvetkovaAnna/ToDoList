@@ -65,7 +65,9 @@ final class OneTaskViewController: UIViewController {
     
     private lazy var saveBarButton: UIBarButtonItem = {
         let barButton = UIBarButtonItem(title: "Сохранить", style: .plain, target: self, action: #selector(saveToDo))
-        barButton.tintColor = textView.isEmpty ? Constants.Colors.Label.tertiary : Constants.Colors.Color.blue
+        barButton.tintColor = Constants.Colors.Color.blue
+        // Constants.Colors.Label.tertiary :
+        barButton.isEnabled = false
         return barButton
     }()
     
@@ -263,7 +265,6 @@ final class OneTaskViewController: UIViewController {
         
         //print("empty", self.textView.isEmpty)
         DDLogInfo("empty \(self.textView.isEmpty)")
-        self.setupSaveButton()
         
         print("toDo?.importance", toDo?.importance ?? "nil")
         segment.selectedSegmentIndex = 1
@@ -428,8 +429,6 @@ final class OneTaskViewController: UIViewController {
             cache.addItem(item: currentToDo)
         }
         
-        print(#function)
-        
         close()
     }
     
@@ -443,6 +442,7 @@ final class OneTaskViewController: UIViewController {
     
     @objc private func setDeadlineDate(_: AnyObject/*calend: UIDatePicker*/) {
         calendarLabel.text = calendar.date.inString(withYear: true)
+        setupSaveButton()
     }
     
     @objc func switchDeadlineLabel() {
@@ -452,8 +452,10 @@ final class OneTaskViewController: UIViewController {
             separatorCalendar.isHidden = true
         }
         
+        let date = Date.now + 24 * 60 * 60
         calendarLabel.isHidden.toggle()
-        calendarLabel.text = (Date.now + 24 * 60 * 60).inString(withYear: true)
+        calendarLabel.text = date.inString(withYear: true)
+        calendar.date = date
         setupSaveButton()
     }
     

@@ -11,6 +11,7 @@ opt_in_rules:
  
 excluded:
 - Pods
+- CocoaLumberjack
 
 nesting:
   type_level:
