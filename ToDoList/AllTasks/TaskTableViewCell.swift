@@ -139,8 +139,6 @@ class TaskTableViewCell: UITableViewCell {
         //calendarImage.isHidden = deadlineLabel.text?.isEmpty
         deadlineLabel.text = item.deadline?.inString(withYear: false)
         exclamationMark.isHidden = !(item.importance == .important)
-        guard let textDeadline = deadlineLabel.text else { return }
-        calendarImage.isHidden = textDeadline.isEmpty
         
         let state: CircleState
         if let deadline = item.deadline, deadline < Date.now {
@@ -157,6 +155,10 @@ class TaskTableViewCell: UITableViewCell {
         case .done:
             circleImage.image = Constants.Images.circleGreen
         }
+        
+        //guard let textDeadline = deadlineLabel.text else { return }
+        calendarImage.isHidden = item.deadline == nil
+        //calendarImage.isHidden = textDeadline.isEmpty
     }
     
     override func prepareForReuse() {

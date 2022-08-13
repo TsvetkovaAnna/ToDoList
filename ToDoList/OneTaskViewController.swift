@@ -2,9 +2,19 @@ import UIKit
 import CocoaLumberjack
 
 protocol OneTaskViewControllerDelegate: AnyObject {
-    //func reloadData()
     func willDismiss()
     func updateTableViewDeletingRow()
+}
+
+extension OneTaskViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        let fixedWidth = textView.frame.size.width
+        let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+        textView.frame.size = CGSize(width: fixedWidth, height: max(newSize.height, textViewHeight))
+        //textView.frame = CGRect(origin: textView.frame.origin, size: newSize)
+//        textView.sizeToFit()
+//        textViewHeight = textView.contentSize.height
+    }
 }
 
 final class OneTaskViewController: UIViewController {
@@ -15,9 +25,9 @@ final class OneTaskViewController: UIViewController {
     
     //private var lastItemId: String? = nil
     
-    private var buttonDeleteHeight: CGFloat = 56 //пока не использовала
+    private var buttonDeleteHeight: CGFloat = 56
     
-    //private var deadlineHorizontalStackHeight: NSLayoutConstraint?
+    private var textViewHeight: CGFloat = 120
     
     weak var delegate: OneTaskViewControllerDelegate?
     
@@ -88,7 +98,10 @@ final class OneTaskViewController: UIViewController {
             self.setupSaveButton()
         }
         textView.backgroundColor = .white
+        //textView.isScrollEnabled = false
+        //textView.sizeToFit()
         textView.layer.cornerRadius = 16
+        textView.delegate = self
         textView.textContainerInset = UIEdgeInsets(top: 17, left: 16, bottom: 17, right: 16)
         textView.font = Constants.Fonts.body
         textView.translatesAutoresizingMaskIntoConstraints = false
@@ -221,7 +234,8 @@ final class OneTaskViewController: UIViewController {
         button.setTitle("Удалить", for: .normal)
         button.addTarget(self, action: #selector(didTapDeleteButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.isEnabled = toDo != nil
+        //button.isEnabled = toDo != nil
+        button.isEnabled = !textView.isEmpty
         return button
     }()
     
@@ -254,7 +268,7 @@ final class OneTaskViewController: UIViewController {
         super.viewDidLoad()
         
         setupView()
-        
+        //self.textViewDidChange(textView)
         switcher.isOn = toDo != nil && toDo?.deadline != nil
         calendar.isHidden = true
         calendarLabel.isHidden = !switcher.isOn
@@ -375,8 +389,11 @@ final class OneTaskViewController: UIViewController {
     
     private func setTextView() {
         contentView.addSubview(textView)
+        
+//        let textViewHeightContent = textView.contentSize.height
+//        let trueHeightTextView = textViewHeightContent > 120 ? textViewHeightContent : 120
         let textViewTop = textView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16)
-        let textViewHeight = textView.heightAnchor.constraint(equalToConstant: 120)
+        let textViewHeight = textView.heightAnchor.constraint(equalToConstant: textViewHeight)
         let textViewLeading = textView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16)
         let textViewTrailing = textView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
         NSLayoutConstraint.activate([textViewTop, textViewHeight, textViewLeading, textViewTrailing])
@@ -485,6 +502,10 @@ final class OneTaskViewController: UIViewController {
         DDLogInfo("empty text - \(self.textView.isEmpty)")
         saveBarButton.isEnabled = !textView.isEmpty && !isCurrentSame
     }
+    
+//    @objc func setupDeleteButton() {
+//        buttonDelete.isEnabled = !textView.isEmpty
+//    }
 
     @objc private func openCalendar() {
         separatorCalendar.isHidden.toggle()
