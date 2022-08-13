@@ -184,24 +184,11 @@
 			children = (
 				951D37A32894545800DA3BEC /* AppDelegate.swift */,
 				951D37A52894545800DA3BEC /* SceneDelegate.swift */,
-				9585858D28A68B9600DFEEC4 /* NetworkService.swift */,
-				9585858F28A68CB400DFEEC4 /* FileCacheService.swift */,
-				9585859328A6969200DFEEC4 /* MockNetworkService.swift */,
-				9585859128A68FD200DFEEC4 /* MockFileCacheService.swift */,
-				9585859528A7DB5000DFEEC4 /* GeneralMockService.swift */,
+				95ED7C8A28A8444A00569855 /* ModelCacheData */,
 				951D37A72894545800DA3BEC /* OneTaskViewController.swift */,
-				95563EB728A0613700ADA9E7 /* PlaceholderTextView.swift */,
-				95563EB928A0616300ADA9E7 /* TaskListViewController.swift */,
-				95563EBB28A061A500ADA9E7 /* TransitionNavigationController.swift */,
-				95563EBD28A061D100ADA9E7 /* CellExpandingAnimator.swift */,
-				95563EBF28A061F000ADA9E7 /* TaskListView.swift */,
-				95563EC128A0622300ADA9E7 /* TaskTableViewCell.swift */,
-				95563EC328A0623E00ADA9E7 /* NewTableViewCell.swift */,
-				95563EC528A0626200ADA9E7 /* FileCache.swift */,
-				951D37D32894608800DA3BEC /* ToDoItemModel.swift */,
-				95563EC728A0629800ADA9E7 /* HeaderListView.swift */,
-				95563EC928A062C100ADA9E7 /* DateExtension.swift */,
-				95D84CA32897243B0001AE51 /* IndentTextField.swift */,
+				95ED7C8928A843D600569855 /* AllTasks */,
+				95ED7C8C28A844F400569855 /* TransitionAnimation */,
+				95ED7C8B28A8449F00569855 /* ExtensionsCustom */,
 				9585858B28A55C7E00DFEEC4 /* Constants.swift */,
 				951D37D7289460E100DA3BEC /* fileJSON.json */,
 				951D37AC2894546000DA3BEC /* Assets.xcassets */,
@@ -227,6 +214,51 @@
 				951D37C62894546000DA3BEC /* ToDoListUITestsLaunchTests.swift */,
 			);
 			path = ToDoListUITests;
+			sourceTree = "<group>";
+		};
+		95ED7C8928A843D600569855 /* AllTasks */ = {
+			isa = PBXGroup;
+			children = (
+				95563EB928A0616300ADA9E7 /* TaskListViewController.swift */,
+				95563EBF28A061F000ADA9E7 /* TaskListView.swift */,
+				95563EC128A0622300ADA9E7 /* TaskTableViewCell.swift */,
+				95563EC328A0623E00ADA9E7 /* NewTableViewCell.swift */,
+				95563EC728A0629800ADA9E7 /* HeaderListView.swift */,
+			);
+			path = AllTasks;
+			sourceTree = "<group>";
+		};
+		95ED7C8A28A8444A00569855 /* ModelCacheData */ = {
+			isa = PBXGroup;
+			children = (
+				9585858D28A68B9600DFEEC4 /* NetworkService.swift */,
+				9585858F28A68CB400DFEEC4 /* FileCacheService.swift */,
+				9585859328A6969200DFEEC4 /* MockNetworkService.swift */,
+				9585859128A68FD200DFEEC4 /* MockFileCacheService.swift */,
+				9585859528A7DB5000DFEEC4 /* GeneralMockService.swift */,
+				95563EC528A0626200ADA9E7 /* FileCache.swift */,
+				951D37D32894608800DA3BEC /* ToDoItemModel.swift */,
+			);
+			path = ModelCacheData;
+			sourceTree = "<group>";
+		};
+		95ED7C8B28A8449F00569855 /* ExtensionsCustom */ = {
+			isa = PBXGroup;
+			children = (
+				95563EB728A0613700ADA9E7 /* PlaceholderTextView.swift */,
+				95563EC928A062C100ADA9E7 /* DateExtension.swift */,
+				95D84CA32897243B0001AE51 /* IndentTextField.swift */,
+			);
+			path = ExtensionsCustom;
+			sourceTree = "<group>";
+		};
+		95ED7C8C28A844F400569855 /* TransitionAnimation */ = {
+			isa = PBXGroup;
+			children = (
+				95563EBB28A061A500ADA9E7 /* TransitionNavigationController.swift */,
+				95563EBD28A061D100ADA9E7 /* CellExpandingAnimator.swift */,
+			);
+			path = TransitionAnimation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

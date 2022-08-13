@@ -15,7 +15,7 @@ final class OneTaskViewController: UIViewController {
     
     //private var lastItemId: String? = nil
     
-    //static var buttonDeleteHeight: CGFloat = 50 //пока не использовала
+    private var buttonDeleteHeight: CGFloat = 56 //пока не использовала
     
     //private var deadlineHorizontalStackHeight: NSLayoutConstraint?
     
@@ -286,7 +286,7 @@ final class OneTaskViewController: UIViewController {
         super.viewWillAppear(animated)
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShow(_:)), name: UIResponder.keyboardDidShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidHide(_:)), name: UIResponder.keyboardDidHideNotification, object: nil)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -294,7 +294,7 @@ final class OneTaskViewController: UIViewController {
         super.viewDidDisappear(animated)
         
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidHideNotification, object: nil)
         view.removeGestureRecognizer(tapRecognizer)
     }
     
@@ -302,18 +302,40 @@ final class OneTaskViewController: UIViewController {
         
         view.addGestureRecognizer(tapRecognizer)
         
-        guard let keyboardFrameValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue
-        else { return }
+        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            let keyboardHeight = keyboardRectangle.height
+            
+            let deleteButtonBottomPointY = buttonDelete.frame.origin.y + buttonDeleteHeight
+            let keyboardOriginY = view.safeAreaLayoutGuide.layoutFrame.height - keyboardHeight
+            
+            var navBarHeight: CGFloat = 0
+            if let barHeight = navigationController?.navigationBar.frame.height {
+                navBarHeight = barHeight
+            }
+            
+            //let yOffset = keyboardOriginY <= deleteButtonBottomPointY ? deleteButtonBottomPointY - keyboardOriginY + 16  : 0
+            let yOffset = keyboardOriginY <= deleteButtonBottomPointY ? deleteButtonBottomPointY - keyboardOriginY + 16 - navBarHeight : 0 - navBarHeight
+            scrollView.setContentOffset(CGPoint(x: 0, y: yOffset), animated: true)
+        }
+//        guard let keyboardFrameValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue
+//        else { return }
         
-        let offsetY = keyboardFrameValue.cgRectValue.height
+//        let offsetY = keyboardFrameValue.cgRectValue.height
         //scrollView.setContentOffset(CGPoint(x: 0, y: offsetY), animated: true)
-        scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+        
     }
     
     @objc private func keyboardDidHide(_ notification: Notification) {
         view.removeGestureRecognizer(tapRecognizer)
         print(#function)
-        scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+        var navBarHeight: CGFloat = 0
+        if let barHeight = navigationController?.navigationBar.frame.height {//navigationController?.tabBarController?.tabBar.frame.height {
+            navBarHeight = barHeight
+        }
+        let yOffset = 0 - navBarHeight
+        //scrollView.setContentOffset(.zero, animated: true)
+        scrollView.setContentOffset(CGPoint(x: 0, y: yOffset), animated: true)
     }
     
     @objc func viewTapped() {
@@ -394,7 +416,7 @@ final class OneTaskViewController: UIViewController {
     private func setButtonDelete() {
         contentView.addSubview(buttonDelete)
         let buttonDeleteTop = buttonDelete.topAnchor.constraint(equalTo: accessoriesVerticalStack.bottomAnchor, constant: 15)
-        let buttonDeleteHeight = buttonDelete.heightAnchor.constraint(equalToConstant: 56)
+        let buttonDeleteHeight = buttonDelete.heightAnchor.constraint(equalToConstant: buttonDeleteHeight)
         let buttonDeleteLeading = buttonDelete.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15)
         let buttonDeleteTrailing = buttonDelete.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
         
