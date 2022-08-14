@@ -6,41 +6,71 @@
 //
 
 import Foundation
-//import Reachability
+// import Reachability
+
+enum Request {
+    case get, post
+}
 
 class MockNetworkService: NetworkService {
     
-    var mockItems: [ToDoItem] {[
-        ToDoItem(text: "Dream", importance: .low, deadline: Date(timeIntervalSinceNow: 3*24*3600)),
-        ToDoItem(text: "Work", importance: .basic, deadline: Date(timeIntervalSinceNow: 5*24*3600)),
-        ToDoItem(text: "Sleep", importance: .important, deadline: Date(timeIntervalSinceNow: 7*24*3600))
-    ]}
+    let baseURL = URL(string: "https://google.com/request/")
     
     func getAllTodoItems(completion: @escaping ([ToDoItem]?) -> Void) {
-        mockCompletion { items in
+        
+        guard let url = baseURL?.appendingPathComponent("getAll") else { return }
+        
+        request(.get, url: url) { items in
             completion(items)
         }
     }
     
     func saveAllTodoItems(_ items: [ToDoItem], completion: @escaping ([ToDoItem]?) -> Void) {
-        mockCompletion { items in
+        
+        guard let url = baseURL?.appendingPathComponent("saveAll"),
+              let json = ToDoItemList.json(fromItems: items) else { return }
+        
+        let parameters = [
+            "list": json
+        ]
+        
+        request(.post, url: url, parameters: parameters) { items in
             completion(items)
         }
     }
     
     func addTodoItem(_ item: ToDoItem, completion: @escaping ([ToDoItem]?) -> Void) {
-        mockCompletion { items in
+        
+        guard let url = baseURL?.appendingPathComponent("add") else { return }
+        
+        request(.post, url: url, parameters: item.json) { items in
             completion(items)
         }
     }
     
     func editTodoItem(_ item: ToDoItem, completion: @escaping ([ToDoItem]?) -> Void) {
-        mockCompletion { items in
+        
+        guard let url = baseURL?.appendingPathComponent("edit") else { return }
+        
+        request(.post, url: url, parameters: item.json) { items in
             completion(items)
         }
     }
     
     func deleteTodoItem(at id: String, completion: @escaping ([ToDoItem]?) -> Void) {
+        
+        guard let url = baseURL?.appendingPathComponent("delete") else { return }
+        
+        let parameters = [
+            "id": id
+        ]
+        
+        request(.post, url: url, parameters: parameters) { items in
+            completion(items)
+        }
+    }
+    
+    func request(_ type: Request, url: URL, parameters: [String: Any]? = nil, completion: @escaping ([ToDoItem]?) -> Void) {
         mockCompletion { items in
             completion(items)
         }
@@ -49,7 +79,8 @@ class MockNetworkService: NetworkService {
     func mockCompletion(completion: @escaping ([ToDoItem]?) -> Void) {
         mockLeftOffClosure {
             if self.isConnectionAvailable() {
-                completion(self.mockItems)
+                guard let mockServerData = MockServer.mockServerData else { return }
+                completion(mockServerData.parseToItems())
             } else {
                 completion(nil)
             }
@@ -67,51 +98,41 @@ class MockNetworkService: NetworkService {
         
         return true
         
-//        do {
-//            let reachability = try Reachability()
-//
-//            switch reachability.connection {
-//            case .unavailable, .none:
-//                return false
-//            case .cellular, .wifi:
-//                return true
-//            }
-//        } catch {
-//            print(error)
-//        }
-//
-//        return false
+        /*do {
+            let reachability = try Reachability()
+
+            switch reachability.connection {
+            case .unavailable, .none:
+                return false
+            case .cellular, .wifi:
+                return true
+            }
+        } catch {
+            print(error)
+        }
+
+        return false*/
     }
 }
 
-class MockNetworkService2 {
-    
-    private let fileCasheServise = MockFileCacheService2()
-    
-    private var cacheUrl: URL? {
-        guard let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
-        return url.appendingPathComponent("ToDoItems.txt")
-    }
-    
-    func getAllTodoItems(completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
-        guard let cacheURL = cacheUrl else { return }
-        fileCasheServise.load(from: cacheURL.path) { result in
-            completion(result)
+extension ToDoItem {
+    func parameters() -> [String: Any] {
+        var parameters = [
+            "id":          id,
+            "text":        text,
+            "importance":  importance.rawValue,
+            "isDone":      isDone,
+            "dateCreated": dateCreated.inString(withYear: true)
+        ] as [String : Any]
+        
+        if let deadline = deadline?.inString(withYear: true) {
+            parameters["deadline"] = deadline
         }
-    }
-    
-    func editTodoItem(_ item: ToDoItem, completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
-        fileCasheServise.add(item)
-        getAllTodoItems { result in
-            completion(result)
+        
+        if let dateChanged = dateChanged?.inString(withYear: true) {
+            parameters["dateChanged"] = dateChanged
         }
+        
+        return parameters
     }
-    
-    func deleteTodoItem(at id: String, completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
-        fileCasheServise.delete(id: id)
-        getAllTodoItems { result in
-            completion(result)
-        }
-    }
-    
 }

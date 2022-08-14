@@ -64,6 +64,8 @@ final class FileCache {
     
     func loadData(_ fromURL: URL? = nil) {
         
+        print(#function)
+        
         var parsed: [ToDoItem]?
         
         parsed = parseCache(fromURL)
@@ -93,13 +95,9 @@ final class FileCache {
         
         do {
             let cacheData = try Data(contentsOf: cacheUrl)
-            guard let cacheDict = try JSONSerialization.jsonObject(with: cacheData, options: .allowFragments) as? [String: [[String: Any]]]
-            else { return nil }
-            
-            return ToDoItemList(cacheDict).todoItems
-            
+            return cacheData.parseToItems()
         } catch {
-            print(error)
+            print("PARSERR", error)
         }
         
         return nil
@@ -109,9 +107,7 @@ final class FileCache {
         
         do {
             let data = try Data(contentsOf: URL(fileURLWithPath: pathForFile))
-            guard let dict = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]
-            else { return nil }
-            return ToDoItemList(dict).todoItems
+            return data.parseToItems()
         } catch {
             print(error)
         }

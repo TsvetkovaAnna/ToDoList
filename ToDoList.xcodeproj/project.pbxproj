@@ -37,6 +37,9 @@
 		9585859628A7DB5000DFEEC4 /* GeneralMockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9585859528A7DB5000DFEEC4 /* GeneralMockService.swift */; };
 		95D84CA22896F1840001AE51 /* MathFunc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D84CA12896F1840001AE51 /* MathFunc.swift */; };
 		95D84CA42897243B0001AE51 /* IndentTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D84CA32897243B0001AE51 /* IndentTextField.swift */; };
+		95F621F328A945ED0006FE63 /* MockTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F621F228A945ED0006FE63 /* MockTest.swift */; };
+		95F621F528A9527D0006FE63 /* MockServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F621F428A9527D0006FE63 /* MockServer.swift */; };
+		95F621F728A959230006FE63 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F621F628A959230006FE63 /* Data+Extensions.swift */; };
 		B49EB543566BD06D8A9BF2D6 /* Pods_ToDoList.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20E3E7824EBA908152CDDD07 /* Pods_ToDoList.framework */; };
 		E94F6A0409C8C9199082116B /* Pods_ToDoListTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 994B28C1D598B8CA89219026 /* Pods_ToDoListTests.framework */; };
 /* End PBXBuildFile section */
@@ -97,6 +100,9 @@
 		9585859528A7DB5000DFEEC4 /* GeneralMockService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralMockService.swift; sourceTree = "<group>"; };
 		95D84CA12896F1840001AE51 /* MathFunc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathFunc.swift; sourceTree = "<group>"; };
 		95D84CA32897243B0001AE51 /* IndentTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndentTextField.swift; sourceTree = "<group>"; };
+		95F621F228A945ED0006FE63 /* MockTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTest.swift; sourceTree = "<group>"; };
+		95F621F428A9527D0006FE63 /* MockServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServer.swift; sourceTree = "<group>"; };
+		95F621F628A959230006FE63 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
 		994B28C1D598B8CA89219026 /* Pods_ToDoListTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ToDoListTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5BA7CFCF1CA08B79254A438 /* Pods_ToDoList_ToDoListUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ToDoList_ToDoListUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB52D5519389AA41CDB8FBEB /* Pods-ToDoListTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ToDoListTests.release.xcconfig"; path = "Target Support Files/Pods-ToDoListTests/Pods-ToDoListTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -234,10 +240,13 @@
 				9585858D28A68B9600DFEEC4 /* NetworkService.swift */,
 				9585858F28A68CB400DFEEC4 /* FileCacheService.swift */,
 				9585859328A6969200DFEEC4 /* MockNetworkService.swift */,
+				95F621F428A9527D0006FE63 /* MockServer.swift */,
 				9585859128A68FD200DFEEC4 /* MockFileCacheService.swift */,
 				9585859528A7DB5000DFEEC4 /* GeneralMockService.swift */,
+				95F621F228A945ED0006FE63 /* MockTest.swift */,
 				95563EC528A0626200ADA9E7 /* FileCache.swift */,
 				951D37D32894608800DA3BEC /* ToDoItemModel.swift */,
+				95F621F628A959230006FE63 /* Data+Extensions.swift */,
 			);
 			path = ModelCacheData;
 			sourceTree = "<group>";
@@ -528,15 +537,18 @@
 				9585859228A68FD200DFEEC4 /* MockFileCacheService.swift in Sources */,
 				9585859028A68CB400DFEEC4 /* FileCacheService.swift in Sources */,
 				95D84CA22896F1840001AE51 /* MathFunc.swift in Sources */,
+				95F621F728A959230006FE63 /* Data+Extensions.swift in Sources */,
 				95563EC428A0623E00ADA9E7 /* NewTableViewCell.swift in Sources */,
 				951D37D42894608800DA3BEC /* ToDoItemModel.swift in Sources */,
 				95563EBC28A061A500ADA9E7 /* TransitionNavigationController.swift in Sources */,
 				95D84CA42897243B0001AE51 /* IndentTextField.swift in Sources */,
+				95F621F528A9527D0006FE63 /* MockServer.swift in Sources */,
 				95563EBA28A0616300ADA9E7 /* TaskListViewController.swift in Sources */,
 				95563EBE28A061D100ADA9E7 /* CellExpandingAnimator.swift in Sources */,
 				951D37A42894545800DA3BEC /* AppDelegate.swift in Sources */,
 				9585859428A6969200DFEEC4 /* MockNetworkService.swift in Sources */,
 				951D37A62894545800DA3BEC /* SceneDelegate.swift in Sources */,
+				95F621F328A945ED0006FE63 /* MockTest.swift in Sources */,
 				95563EB828A0613700ADA9E7 /* PlaceholderTextView.swift in Sources */,
 				95563EC628A0626200ADA9E7 /* FileCache.swift in Sources */,
 				95563EC028A061F000ADA9E7 /* TaskListView.swift in Sources */,

@@ -101,7 +101,7 @@ final class OneTaskViewController: UIViewController {
         //textView.isScrollEnabled = false
         //textView.sizeToFit()
         textView.layer.cornerRadius = 16
-        textView.delegate = self
+        //textView.delegate = self
         textView.textContainerInset = UIEdgeInsets(top: 17, left: 16, bottom: 17, right: 16)
         textView.font = Constants.Fonts.body
         textView.translatesAutoresizingMaskIntoConstraints = false

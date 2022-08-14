@@ -8,6 +8,7 @@ protocol TaskListViewInput: AnyObject {
 protocol TaskListViewOutput: AnyObject {
     func didSelectItem(_ item: ToDoItem?, onCellFrame: CGRect?, indexPath: IndexPath?)
     func presentNewItem()
+    func changeIsDone(_ indexPath: IndexPath?)
 }
 
 enum UpdateType {
@@ -68,6 +69,8 @@ final class TaskListViewController: UIViewController {
         DDLogInfo("updating at \(String(describing: lastIndexPath))")
         fileCache.loadData()
         
+        print("NEWITEMS: \(fileCache.items.map({ String($0.text.prefix(5)) }))")
+        
         switch type {
         case .refresh:
             delegate?.update(with: fileCache.items, deletingRow: nil, refreshingRow: lastIndexPath)
@@ -94,6 +97,18 @@ final class TaskListViewController: UIViewController {
 }
 
 extension TaskListViewController: TaskListViewOutput, OneTaskViewControllerDelegate {
+    
+    func changeIsDone(_ indexPath: IndexPath?) {
+        guard let row = indexPath?.row else { return }
+        
+        let revertedItem = fileCache.items[row].reverted
+        fileCache.refreshItem(revertedItem, byId: revertedItem.id)
+        
+        //fileCache.items.remove(at: row)
+        //fileCache.items.insert(fileCache.items[row].reverted, at: row)
+        
+        updateTableView(.refresh)
+    }
     
     func updateTableViewDeletingRow() {
         updateTableView(.remove)

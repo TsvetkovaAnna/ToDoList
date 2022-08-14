@@ -108,8 +108,8 @@ extension TaskListView: UITableViewDataSource, UITableViewDelegate {
     private func taskCell(_ indexPath: IndexPath) -> TaskTableViewCell? {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TaskTableViewCell.identifier, for: indexPath) as? TaskTableViewCell else { return nil }
         
-        let item = todoItems[indexPath.row]
-        cell.setCell(with: item)
+        cell.setCell(with: itemAt(indexPath), for: indexPath)
+        cell.delegate = self
         return cell
     }
     
@@ -145,12 +145,12 @@ extension TaskListView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         let doneAction = UIContextualAction(style: .normal, title: nil) { (_, _, completion) in
-            
             completion(true)
         }
         
         doneAction.image = UIImage(systemName: "checkmark.circle")
-        doneAction.backgroundColor = Constants.Colors.Color.green
+        doneAction.backgroundColor = itemAt(indexPath).isDone ? Constants.Colors.Color.lightGray : Constants.Colors.Color.green
+        changeIsDone(indexPath)
         
         return UISwipeActionsConfiguration(actions: [doneAction])
     }
@@ -161,16 +161,18 @@ extension TaskListView: UITableViewDataSource, UITableViewDelegate {
         let item = isLastCell(at: indexPath) ? nil : todoItems[indexPath.row]
         
         let isLastCell = self.tableView(tableView, numberOfRowsInSection: 0) == indexPath.row + 1
-        print("didselect row item\(item?.importance)\n \(todoItems)")
         delegate?.didSelectItem(item, onCellFrame: cell?.frame, indexPath: isLastCell ? nil : indexPath)
+    }
+    
+    func itemAt(_ indexPath: IndexPath) -> ToDoItem {
+        todoItems[indexPath.row]
     }
 }
 
 extension TaskListView: TaskListViewInput {
     
     func update(with items: [ToDoItem], deletingRow: IndexPath?, refreshingRow: IndexPath?) {
-        print(#function)
-        print("rows:", deletingRow ?? "deleting nil", refreshingRow ?? "refreshing nil")
+        
         todoItems = items
         
         if let deletingRow = deletingRow {
@@ -186,7 +188,6 @@ extension TaskListView: TaskListViewInput {
         }
 
         if deletingRow == nil && refreshingRow == nil {
-            print("both nil")
             self.tableView.performBatchUpdates {
                 self.tableView.reloadSections(IndexSet(integer: 0), with: .fade)
             }
@@ -199,12 +200,15 @@ extension TaskListView: TaskListViewInput {
 //    }
 }
 
-//extension TaskListView: /*TaskTableViewCellDelegate,*/ OneTaskViewControllerDelegate { //нужен ли?
-//
-//
-//    func openCurrentTask() {
-//        //let oneTaskController = OneTaskViewController()
-//        //oneTaskController.delegate = self
-//        //present(oneTaskController, animated: true) //нет презента, так как не контроллер
-//    }
-//}
+extension TaskListView: TaskTableViewCellDelegate/*, OneTaskViewControllerDelegate*/ {
+    
+    func changeIsDone(_ indexPath: IndexPath?) {
+        delegate?.changeIsDone(indexPath)
+    }
+    
+    /*func openCurrentTask() {
+        //let oneTaskController = OneTaskViewController()
+        //oneTaskController.delegate = self
+        //present(oneTaskController, animated: true) //нет презента, так как не контроллер
+    }*/
+}

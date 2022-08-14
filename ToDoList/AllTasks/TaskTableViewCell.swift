@@ -9,11 +9,17 @@ enum CircleState {
     case passedDeadline
 }
 
+protocol TaskTableViewCellDelegate: AnyObject {
+    func changeIsDone(_ indexPath: IndexPath?)
+}
+
 class TaskTableViewCell: UITableViewCell {
 
     static let identifier = "TaskTableViewCell"
     
-    //weak var delegate: TaskTableViewCellDelegate?
+    weak var delegate: TaskTableViewCellDelegate?
+    
+    var indexPath: IndexPath?
     
     //var taskModel = ToDoItem(dict: ToDoItem().json) //как привязать Модель?
     
@@ -108,7 +114,10 @@ class TaskTableViewCell: UITableViewCell {
         let image = UIImageView()
         image.backgroundColor = Constants.Colors.Back.secondaryElevated
         image.image = Constants.Images.circleGray
+        image.isUserInteractionEnabled = true
+        image.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(changeIsDone)))
         image.translatesAutoresizingMaskIntoConstraints = false
+        image.contentMode = .scaleAspectFit
         return image
     }()
     
@@ -134,17 +143,21 @@ class TaskTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setCell(with item: ToDoItem) {
+    func setCell(with item: ToDoItem, for indexPath: IndexPath) {
+        
+        self.indexPath = indexPath
+        
         label.text = item.text
         //calendarImage.isHidden = deadlineLabel.text?.isEmpty
         deadlineLabel.text = item.deadline?.inString(withYear: false)
         exclamationMark.isHidden = !(item.importance == .important)
         
-        let state: CircleState
-        if let deadline = item.deadline, deadline < Date.now {
+        var state: CircleState = .notDone
+        
+        if item.isDone {
+            state = .done
+        } else if let deadline = item.deadline, deadline < Date.now {
             state = .passedDeadline
-        } else {
-            state = item.isDone ? .done : .notDone
         }
         
         switch state {
@@ -210,6 +223,10 @@ class TaskTableViewCell: UITableViewCell {
         let heightButton = chevronImage.heightAnchor.constraint(equalToConstant: 11.9)
         
         NSLayoutConstraint.activate([leftBV, rightBV, topBV, bottomBV, leftImageConct, centerYImage, widthImage, heightImage, leftStackConct, rightStackConct, topStackConst, bottomStackConst, leftButtonConct, centerYButton, widthButton, heightButton, markHeight].compactMap({ $0 }))
+    }
+    
+    @objc private func changeIsDone() {
+        delegate?.changeIsDone(indexPath)
     }
 
 }

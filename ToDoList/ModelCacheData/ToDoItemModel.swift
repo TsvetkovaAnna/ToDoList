@@ -6,6 +6,12 @@ enum Importance: String {
     case important
 }
 
+extension ToDoItem {
+    var reverted: ToDoItem {
+        ToDoItem(id: id, text: text, importance: importance, deadline: deadline, isDone: !isDone, dateCreated: dateCreated, dateChanged: dateChanged)
+    }
+}
+
 struct ToDoItem: Equatable {
     
     let id: String
@@ -15,6 +21,16 @@ struct ToDoItem: Equatable {
     let isDone: Bool
     let dateCreated: Date
     let dateChanged: Date?
+    
+    init(id: String, text: String, importance: Importance, deadline: Date?, isDone: Bool, dateCreated: Date, dateChanged: Date?) {
+        self.id = id
+        self.text = text
+        self.importance = importance
+        self.deadline = deadline
+        self.isDone = isDone
+        self.dateCreated = dateCreated
+        self.dateChanged = dateChanged
+    }
     
     init(text: String, importance: Importance, deadline: Date?) {
         self.id = UUID().uuidString

@@ -12,17 +12,39 @@ class GeneralService {
     let networkService: NetworkService
     let fileCacheService: FileCacheService
     
-    init(with networkService: NetworkService, fileCacheService: FileCacheService) {
-        self.networkService = networkService
-        self.fileCacheService = fileCacheService
-    }
-    
     private var cacheUrl: URL? {
         guard let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
         return url.appendingPathComponent("ToDoItems.txt")
     }
     
     private(set) var items = [ToDoItem]()
+    
+    init(with networkService: NetworkService, fileCacheService: FileCacheService) {
+        self.networkService = networkService
+        self.fileCacheService = fileCacheService
+        
+        perfomInOtherThread {
+            guard let cacheURL = self.cacheUrl else { return }
+                
+            self.fileCacheService.load(from: cacheURL.path) { cacheItems in
+                self.items = cacheItems
+            }
+        }
+    }
+    
+    func edit(_ item: ToDoItem) {
+        perfomInOtherThread {
+            self.update()
+            guard let cacheURL = self.cacheUrl else { return }
+            self.fileCacheService.edit(item)
+            self.fileCacheService.save(to: cacheURL.path) { actualItems in
+                self.items = actualItems
+            }
+            self.perfomInMainThread {
+                self.networkService.editTodoItem(item) { _ in }
+            }
+        }
+    }
     
     func add(_ newItem: ToDoItem) {
         perfomInOtherThread {
@@ -53,17 +75,14 @@ class GeneralService {
     }
     
     func update() {
-        guard let cacheURL = self.cacheUrl else { return }
-        
-        self.networkService.getAllTodoItems { networkItems in
+        perfomInMainThread {
+            guard let cacheURL = self.cacheUrl else { return }
             
-            self.fileCacheService.load(from: cacheURL.path) { cacheItems in
-                
-                self.items = cacheItems
+            self.networkService.getAllTodoItems { networkItems in
                 
                 guard let networkItems = networkItems else { return }
                 
-                if cacheItems.isEmpty {
+                if self.items.isEmpty {
                     networkItems.forEach { item in
                         self.fileCacheService.add(item)
                     }
@@ -72,7 +91,7 @@ class GeneralService {
                     }
                 } else {
                     self.perfomInMainThread {
-                        self.networkService.saveAllTodoItems(cacheItems) { _ in }
+                        self.networkService.saveAllTodoItems(self.items) { _ in }
                     }
                 }
             }
