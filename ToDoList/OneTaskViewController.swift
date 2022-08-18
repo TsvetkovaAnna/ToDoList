@@ -1,9 +1,20 @@
-
-
 import UIKit
+import CocoaLumberjack
 
-protocol OneTaskViewControllerDelegate {
-    func reloadData()
+protocol OneTaskViewControllerDelegate: AnyObject {
+    func willDismiss()
+    func updateTableViewDeletingRow()
+}
+
+extension OneTaskViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        let fixedWidth = textView.frame.size.width
+        let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+        textView.frame.size = CGSize(width: fixedWidth, height: max(newSize.height, textViewHeight))
+        //textView.frame = CGRect(origin: textView.frame.origin, size: newSize)
+//        textView.sizeToFit()
+//        textViewHeight = textView.contentSize.height
+    }
 }
 
 final class OneTaskViewController: UIViewController {
@@ -14,15 +25,43 @@ final class OneTaskViewController: UIViewController {
     
     //private var lastItemId: String? = nil
     
-    private lazy var buttonDeleteHeight: CGFloat = 50 //пока не использовала
+    private var buttonDeleteHeight: CGFloat = 56
     
-    //private var deadlineHorizontalStackHeight: NSLayoutConstraint?
+    private var textViewHeight: CGFloat = 120
     
-    /*weak*/ var delegate: OneTaskViewControllerDelegate?
+    weak var delegate: OneTaskViewControllerDelegate?
     
     private lazy var tapRecognizer: UITapGestureRecognizer = {
         UITapGestureRecognizer(target: self, action: #selector(viewTapped))
     }()
+    
+    var isCurrentSame: Bool {
+        currentToDo?.text == toDo?.text && currentToDo?.deadline == toDo?.deadline &&  currentToDo?.importance == toDo?.importance
+    }
+    
+    var currentToDo: ToDoItem? {
+        
+        guard let text = textView.text else { return nil }
+        
+        let importance: Importance// = .basic
+
+        switch segment.selectedSegmentIndex {
+        case 0:
+            importance = .low
+        case 1:
+            importance = .basic
+        case 2:
+            importance = .important
+        default:
+            importance = .basic
+        }
+        
+        print("importance:", importance)
+        
+        let deadline = switcher.isOn ? calendar.date : nil
+        
+        return ToDoItem(text: text, importance: importance, deadline: deadline)
+    }
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -36,13 +75,15 @@ final class OneTaskViewController: UIViewController {
     
     private lazy var saveBarButton: UIBarButtonItem = {
         let barButton = UIBarButtonItem(title: "Сохранить", style: .plain, target: self, action: #selector(saveToDo))
-        barButton.tintColor = textView.text == "" ? .init(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.3) : .init(red: 0.0, green: 0.48, blue: 1.0, alpha: 1.0)
+        barButton.tintColor = Constants.Colors.Color.blue
+        // Constants.Colors.Label.tertiary :
+        barButton.isEnabled = false
         return barButton
     }()
     
     private lazy var undoBarButton: UIBarButtonItem = {
         let barButton = UIBarButtonItem(title: "Отменить", style: .plain, target: self, action: #selector(close))
-        barButton.tintColor = .init(red: 0.0, green: 0.48, blue: 1.0, alpha: 1.0)
+        barButton.tintColor = Constants.Colors.Color.blue
         return barButton
     }()
     
@@ -52,51 +93,29 @@ final class OneTaskViewController: UIViewController {
         return contentView
     }()
     
-//    private lazy var placeholderLabel: UILabel = {
-//        let placeholder = UILabel()
-//        placeholder.text = "Что надо сделать?"
-//        placeholder.font = UIFont(name: "SFProText-Regular", size: 17)
-//        placeholder.sizeToFit()
-//        placeholder.textColor = .lightGray
-//        placeholder.isHidden = !textView.text.isEmpty
-//        placeholder.frame.origin = CGPoint(x: 19, y: 17)
-//        return placeholder
-//    }()
-    
     private(set) lazy var textView: PlaceholderTextView = {
         let textView = PlaceholderTextView(with: "Что надо сделать?", text: toDo?.text) {
             self.setupSaveButton()
         }
         textView.backgroundColor = .white
+        //textView.isScrollEnabled = false
+        //textView.sizeToFit()
         textView.layer.cornerRadius = 16
+        //textView.delegate = self
         textView.textContainerInset = UIEdgeInsets(top: 17, left: 16, bottom: 17, right: 16)
-        textView.font = UIFont.systemFont(ofSize: 17)
+        textView.font = Constants.Fonts.body
         textView.translatesAutoresizingMaskIntoConstraints = false
         return textView
     }()
-    
-    @objc func setupSaveButton() {
-        print("empty", self.textView.isEmpty)
-        saveBarButton.isEnabled = !textView.isEmpty && !isCurrentSame
-    }
     
 //    var textChanged: () -> Void = {
 //        self.saveBarButton.isEnabled = !self.textView.isEmpty
 //    }
     
-//    private lazy var accessoriesView: UIView = {
-//        let view = UIView()
-//        view.layer.cornerRadius = 16
-//        view.clipsToBounds = true
-//        view.backgroundColor = .white
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//        return view
-//    }()
-    
     private lazy var accessoriesVerticalStack: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.backgroundColor = .white
+        stackView.backgroundColor = Constants.Colors.Back.secondaryElevated
         stackView.layer.cornerRadius = 16
         //stackView.alignment = .fill
         stackView.distribution = .fill
@@ -109,7 +128,7 @@ final class OneTaskViewController: UIViewController {
     
     private lazy var separator: UIView = {
         let separator = UIView()
-        separator.backgroundColor = .init(_colorLiteralRed: 0.0, green: 0.0, blue: 0.0, alpha: 0.2)
+        separator.backgroundColor = Constants.Colors.Support.separator
         separator.translatesAutoresizingMaskIntoConstraints = false
         return separator
     }()
@@ -117,7 +136,7 @@ final class OneTaskViewController: UIViewController {
     private lazy var separatorCalendar: UIView = {
         let separator = UIView()
         separator.isHidden = true
-        separator.backgroundColor = .init(_colorLiteralRed: 0.0, green: 0.0, blue: 0.0, alpha: 0.2)
+        separator.backgroundColor = Constants.Colors.Support.separator
         separator.translatesAutoresizingMaskIntoConstraints = false
         return separator
     }()
@@ -143,7 +162,6 @@ final class OneTaskViewController: UIViewController {
         return stack
     }()
         
-    
     private lazy var deadlineHorizontalStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
@@ -157,8 +175,8 @@ final class OneTaskViewController: UIViewController {
     private lazy var importanceLabel: UILabel = {
         let label = UILabel()
         label.text = "Важность"
-        label.textColor = .black
-        label.font = UIFont.systemFont(ofSize: 17)
+        label.textColor = Constants.Colors.Label.primary
+        label.font = Constants.Fonts.body
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -166,22 +184,16 @@ final class OneTaskViewController: UIViewController {
     private lazy var deadlineLabel: UILabel = {
         let label = UILabel()
         label.text = "Сделать до"
-        label.textColor = .black
-        label.font = UIFont.systemFont(ofSize: 17)//UIFont.boldSystemFont(ofSize: 17)
+        label.textColor = Constants.Colors.Label.primary
+        label.font = Constants.Fonts.body
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private lazy var calendarLabel: UILabel = {
         let label = UILabel()
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.locale = Locale(identifier: "ru_RU")
-//        dateFormatter.dateFormat = "d MMMM yyyy"
-//        let date = Date.now + 24 * 60 * 60
-//        let defaultText = dateFormatter.string(from: date)
-//        label.text = defaultText
-        label.textColor = .init(red: 0.0, green: 0.48, blue: 1.0, alpha: 1.0)
-        label.font = UIFont.systemFont(ofSize: 13)
+        label.textColor = Constants.Colors.Color.blue
+        label.font = Constants.Fonts.footnote
         label.isUserInteractionEnabled = true
         let gesture = UITapGestureRecognizer(target: self, action: #selector(openCalendar))
         label.addGestureRecognizer(gesture)
@@ -189,13 +201,12 @@ final class OneTaskViewController: UIViewController {
         return label
     }()
     
-    
-    var segmentItems = [UIImage(systemName: "arrow.down")?.withTintColor(.gray, renderingMode: .alwaysOriginal) ?? "<-", "нет", UIImage(systemName: "exclamationmark.2", withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .bold))?.withTintColor(.red, renderingMode: .alwaysOriginal) ?? "!!"] as [Any]
+    var segmentItems = [Constants.Images.arrowDown ?? "<-", "нет", Constants.Images.exclamationmark ?? "!!"] as [Any]
     
     private lazy var segment: UISegmentedControl = {
         let segment = UISegmentedControl(items: segmentItems)
         segment.layer.cornerRadius = 9
-        segment.backgroundColor = .init(_colorLiteralRed: 0.0, green: 0.0, blue: 0.0, alpha: 0.06)
+        segment.backgroundColor = Constants.Colors.Support.overlay
         segment.selectedSegmentTintColor = .white
         //segment.selectedSegmentIndex = 2
         segment.translatesAutoresizingMaskIntoConstraints = false
@@ -218,11 +229,13 @@ final class OneTaskViewController: UIViewController {
         //button.clipsToBounds = true
         button.backgroundColor = .white
         button.tintColor = .black //?
-        button.setTitleColor(UIColor.init(red: 1.0, green: 0.23, blue: 0.19, alpha: 1.0), for: .normal)
-        button.setTitleColor(UIColor.init(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.15), for: .disabled)
+        button.setTitleColor(Constants.Colors.Color.red, for: .normal)
+        button.setTitleColor(Constants.Colors.Label.tertiary, for: .disabled)
         button.setTitle("Удалить", for: .normal)
         button.addTarget(self, action: #selector(didTapDeleteButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
+        //button.isEnabled = toDo != nil
+        button.isEnabled = !textView.isEmpty
         return button
     }()
     
@@ -237,10 +250,9 @@ final class OneTaskViewController: UIViewController {
         calendar.isUserInteractionEnabled = true
         calendar.isHidden = true
         calendar.addTarget(self, action: #selector(setDeadlineDate), for: .allEvents)
-        calendar.tintColor = .init(red: 0.0, green: 0.48, blue: 1.0, alpha: 1.0)
+        calendar.tintColor = Constants.Colors.Color.blue
         return calendar
     }()
-    
     
     init(toDoItem: ToDoItem?) {
         self.toDo = toDoItem
@@ -256,7 +268,7 @@ final class OneTaskViewController: UIViewController {
         super.viewDidLoad()
         
         setupView()
-        
+        //self.textViewDidChange(textView)
         switcher.isOn = toDo != nil && toDo?.deadline != nil
         calendar.isHidden = true
         calendarLabel.isHidden = !switcher.isOn
@@ -265,9 +277,10 @@ final class OneTaskViewController: UIViewController {
             calendar.date = deadline
         }
         
-        print("empty", self.textView.isEmpty)
-        self.setupSaveButton()
+        //print("empty", self.textView.isEmpty)
+        DDLogInfo("empty \(self.textView.isEmpty)")
         
+        print("toDo?.importance", toDo?.importance ?? "nil")
         segment.selectedSegmentIndex = 1
         
         guard let toDo = toDo else { return }
@@ -280,13 +293,14 @@ final class OneTaskViewController: UIViewController {
         case .important:
             segment.selectedSegmentIndex = 2
         }
+        print("toDo?.importance", toDo.importance)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShow(_:)), name: UIResponder.keyboardDidShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidHide(_:)), name: UIResponder.keyboardDidHideNotification, object: nil)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -294,7 +308,7 @@ final class OneTaskViewController: UIViewController {
         super.viewDidDisappear(animated)
         
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidHideNotification, object: nil)
         view.removeGestureRecognizer(tapRecognizer)
     }
     
@@ -302,17 +316,40 @@ final class OneTaskViewController: UIViewController {
         
         view.addGestureRecognizer(tapRecognizer)
         
-        guard let keyboardFrameValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue
-        else { return }
+        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            let keyboardHeight = keyboardRectangle.height
+            
+            let deleteButtonBottomPointY = buttonDelete.frame.origin.y + buttonDeleteHeight
+            let keyboardOriginY = view.safeAreaLayoutGuide.layoutFrame.height - keyboardHeight
+            
+            var navBarHeight: CGFloat = 0
+            if let barHeight = navigationController?.navigationBar.frame.height {
+                navBarHeight = barHeight
+            }
+            
+            //let yOffset = keyboardOriginY <= deleteButtonBottomPointY ? deleteButtonBottomPointY - keyboardOriginY + 16  : 0
+            let yOffset = keyboardOriginY <= deleteButtonBottomPointY ? deleteButtonBottomPointY - keyboardOriginY + 16 - navBarHeight : 0 - navBarHeight
+            scrollView.setContentOffset(CGPoint(x: 0, y: yOffset), animated: true)
+        }
+//        guard let keyboardFrameValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue
+//        else { return }
         
-        let offsetY = keyboardFrameValue.cgRectValue.height
-        scrollView.setContentOffset(CGPoint(x: 0, y: offsetY), animated: true)
+//        let offsetY = keyboardFrameValue.cgRectValue.height
+        //scrollView.setContentOffset(CGPoint(x: 0, y: offsetY), animated: true)
+        
     }
     
     @objc private func keyboardDidHide(_ notification: Notification) {
         view.removeGestureRecognizer(tapRecognizer)
         print(#function)
-        scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+        var navBarHeight: CGFloat = 0
+        if let barHeight = navigationController?.navigationBar.frame.height {//navigationController?.tabBarController?.tabBar.frame.height {
+            navBarHeight = barHeight
+        }
+        let yOffset = 0 - navBarHeight
+        //scrollView.setContentOffset(.zero, animated: true)
+        scrollView.setContentOffset(CGPoint(x: 0, y: yOffset), animated: true)
     }
     
     @objc func viewTapped() {
@@ -323,7 +360,7 @@ final class OneTaskViewController: UIViewController {
     private func setupView() {
         
         title = "Дело"
-        view.backgroundColor = .init(_colorLiteralRed: 0.97, green: 0.97, blue: 0.95, alpha: 1.0)
+        view.backgroundColor = Constants.Colors.Back.primary
         self.navigationItem.setRightBarButton(saveBarButton, animated: true)
         self.navigationItem.setLeftBarButton(undoBarButton, animated: true)
         
@@ -339,26 +376,40 @@ final class OneTaskViewController: UIViewController {
         let contentViewWidth = contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
         let contentViewX = contentView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor)
         
-        contentView.addSubview(textView)
-        let textFieldTop = textView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16)
-        let textFieldHeight = textView.heightAnchor.constraint(equalToConstant: 120)
-        let textFieldLeading = textView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16)
-        let textFieldTrailing = textView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
-        
         //textView.addSubview(placeholderLabel)
         
+        NSLayoutConstraint.activate([scrollViewTop, scrollViewBottom, scrollViewLeading, scrollViewTrailing, contentViewTop, contentViewBottom, contentViewWidth, contentViewX])
+        
+        setTextView()
+        
+        setAccessoriesVerticalStack()
       
+        setButtonDelete()
+    }
+    
+    private func setTextView() {
+        contentView.addSubview(textView)
+        
+//        let textViewHeightContent = textView.contentSize.height
+//        let trueHeightTextView = textViewHeightContent > 120 ? textViewHeightContent : 120
+        let textViewTop = textView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16)
+        let textViewHeight = textView.heightAnchor.constraint(equalToConstant: textViewHeight)
+        let textViewLeading = textView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16)
+        let textViewTrailing = textView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
+        NSLayoutConstraint.activate([textViewTop, textViewHeight, textViewLeading, textViewTrailing])
+    }
+    
+    private func setAccessoriesVerticalStack() {
         contentView.addSubview(accessoriesVerticalStack)
         let accessoriesStackViewTop = accessoriesVerticalStack.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 15)
         let accessoriesStackViewX = accessoriesVerticalStack.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
         let accessoriesStackViewLeading = accessoriesVerticalStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15)
         let accessoriesViewTrailing = accessoriesVerticalStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
         
-        
         accessoriesVerticalStack.addArrangedSubview(importanceHorizontalStack)
         accessoriesVerticalStack.addArrangedSubview(separator)
         accessoriesVerticalStack.addArrangedSubview(deadlineHorizontalStack)
-        //accessoriesVerticalStack.addArrangedSubview(separatorCalendar)
+        accessoriesVerticalStack.addArrangedSubview(separatorCalendar)
         accessoriesVerticalStack.addArrangedSubview(calendar)
         
         importanceHorizontalStack.addArrangedSubview(importanceLabel)
@@ -370,48 +421,41 @@ final class OneTaskViewController: UIViewController {
         deadlineDateVerticalStack.addArrangedSubview(deadlineLabel)
         deadlineDateVerticalStack.addArrangedSubview(calendarLabel)
 
-        let importanceHorizontalStackHeight = importanceHorizontalStack.heightAnchor.constraint(equalToConstant: 46)
+        //let importanceHorizontalStackHeight = importanceHorizontalStack.heightAnchor.constraint(equalToConstant: 46)
         let separatorHeight = separator.heightAnchor.constraint(equalToConstant: 0.5)
-        let deadlineHorizontalStackHeight = deadlineHorizontalStack.heightAnchor.constraint(equalToConstant: 49)
+        //let deadlineHorizontalStackHeight = deadlineHorizontalStack.heightAnchor.constraint(equalToConstant: 49)
+        let separator2Height = separatorCalendar.heightAnchor.constraint(equalToConstant: 0.5)
         let segmentWidth = segment.widthAnchor.constraint(equalToConstant: 150)
         
+        NSLayoutConstraint.activate([accessoriesStackViewTop, accessoriesStackViewX, accessoriesStackViewLeading, accessoriesViewTrailing, separatorHeight/*, importanceHorizontalStackHeight, deadlineHorizontalStackHeight*/, separator2Height, segmentWidth])
+    }
+    
+    private func setButtonDelete() {
         contentView.addSubview(buttonDelete)
         let buttonDeleteTop = buttonDelete.topAnchor.constraint(equalTo: accessoriesVerticalStack.bottomAnchor, constant: 15)
-        let buttonDeleteHeight = buttonDelete.heightAnchor.constraint(equalToConstant: 56)
+        let buttonDeleteHeight = buttonDelete.heightAnchor.constraint(equalToConstant: buttonDeleteHeight)
         let buttonDeleteLeading = buttonDelete.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15)
         let buttonDeleteTrailing = buttonDelete.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
         
-        NSLayoutConstraint.activate([scrollViewTop, scrollViewBottom, scrollViewLeading, scrollViewTrailing, contentViewTop, contentViewBottom, contentViewWidth, contentViewX, textFieldTop, textFieldHeight, textFieldLeading, textFieldTrailing, accessoriesStackViewTop, accessoriesStackViewX, accessoriesStackViewLeading, accessoriesViewTrailing, importanceHorizontalStackHeight, separatorHeight, deadlineHorizontalStackHeight, buttonDeleteTop, buttonDeleteHeight, buttonDeleteLeading, buttonDeleteTrailing, segmentWidth])
+        NSLayoutConstraint.activate([buttonDeleteTop, buttonDeleteHeight, buttonDeleteLeading, buttonDeleteTrailing])
+    }
+    
+    private func returnToTaskList() {
+//        if let navController = navigationController {
+//            navController.popViewController(animated: true)
+//        } else {
+//            print("nav controller is nil")
+//        }
+        dismiss(animated: true, completion: nil)
     }
     
     @objc private func close() {
-        navigationController?.popViewController(animated: true)
-    }
-    
-    var isCurrentSame: Bool {
-        currentToDo?.text == toDo?.text && currentToDo?.deadline == toDo?.deadline &&  currentToDo?.importance == toDo?.importance
-    }
-    
-    var currentToDo: ToDoItem? {
+        //returnToTaskList()
+        //navigationController?.popViewController(animated: true)
         
-        guard let text = textView.text else { return nil }
-        
-        var importance: ImportanceEnum = .basic
-        
-        switch segment.selectedSegmentIndex {
-        case 0:
-            importance = .low
-        case 1:
-            importance = .basic
-        case 2:
-            importance = .important
-        default:
-            importance = .basic
-        }
-        
-        let deadline = switcher.isOn ? calendar.date : nil
-        
-        return ToDoItem(text: text, importance: importance, deadline: deadline)
+        print("delegate?.willDismiss(), delegate = ", delegate ?? "nil")
+        delegate?.willDismiss()
+        dismiss(animated: true)
     }
     
     @objc private func saveToDo() {
@@ -424,59 +468,48 @@ final class OneTaskViewController: UIViewController {
             cache.addItem(item: currentToDo)
         }
         
-        navigationController?.popViewController(animated: true)
+        close()
     }
     
     @objc private func didTapDeleteButton() {
+        
         guard let id = toDo?.id else { return }
         cache.deleteItem(byId: id)
+        delegate?.updateTableViewDeletingRow()
+        close()
     }
     
     @objc private func setDeadlineDate(_: AnyObject/*calend: UIDatePicker*/) {
         calendarLabel.text = calendar.date.inString(withYear: true)
+        setupSaveButton()
     }
     
     @objc func switchDeadlineLabel() {
         
         if !switcher.isOn {
             calendar.isHidden = true
+            separatorCalendar.isHidden = true
         }
         
-//        if !switcher.isOn {
-//            calendar.isHidden = false
-//            //deadlineHorizontalStackHeight = deadlineHorizontalStack.heightAnchor.constraint(equalToConstant: 49)
-//            //NSLayoutConstraint.activate([deadlineHorizontalStackHeight])
-//        }
-            
+        let date = Date.now + 24 * 60 * 60
         calendarLabel.isHidden.toggle()
-        calendarLabel.text = (Date.now + 24 * 60 * 60).inString(withYear: true)
+        calendarLabel.text = date.inString(withYear: true)
+        calendar.date = date
         setupSaveButton()
     }
     
-    
-    
-    @objc func switchDeadline() {
-        
-        if calendar.isHidden {
-            calendar.date = Date(timeIntervalSinceNow: 24*60*60)
-        }
-        
-        calendar.isHidden.toggle()
+    @objc func setupSaveButton() {
+        DDLogInfo("empty text - \(self.textView.isEmpty)")
+        saveBarButton.isEnabled = !textView.isEmpty && !isCurrentSame
     }
     
-    @objc private func openCalendar() {
-        
-        //        if calendar.isHidden {
-//
-//            //calendar.date = Date(timeIntervalSinceNow: 24*60*60)
-//        }
+//    @objc func setupDeleteButton() {
+//        buttonDelete.isEnabled = !textView.isEmpty
+//    }
 
-        
+    @objc private func openCalendar() {
         separatorCalendar.isHidden.toggle()
         calendar.isHidden.toggle()
     }
-
+    
 }
-
-
-

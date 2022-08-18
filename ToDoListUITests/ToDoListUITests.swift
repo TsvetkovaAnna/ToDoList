@@ -3,9 +3,7 @@
 //  ToDoListUITests
 //
 //  Created by Anna Tsvetkova on 29.07.2022.
-//
-
-import XCTest
+//import XCTest
 
 class ToDoListUITests: XCTestCase {
 
