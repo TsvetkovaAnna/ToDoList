@@ -11,11 +11,6 @@ protocol TaskListViewOutput: AnyObject {
     func changeIsDone(_ indexPath: IndexPath?)
 }
 
-enum UpdateType {
-    case refresh
-    case remove
-}
-
 final class TaskListViewController: UIViewController {
 
     let fileCache: FileCache
@@ -24,8 +19,12 @@ final class TaskListViewController: UIViewController {
     
     private var lastIndexPath: IndexPath?
     
+    var appDelegate: AppDelegate? {
+        UIApplication().delegate as? AppDelegate
+    }
+    
     private lazy var viewTable: TaskListView = {
-        print("initing tv with", fileCache.items.map({ $0.importance}))
+        
         let view = TaskListView(frame: .zero, todoItems: fileCache.items, deleteAction: { indexPath in
             let item = self.fileCache.items[indexPath.row]
             self.fileCache.deleteItem(byId: item.id)
@@ -51,6 +50,9 @@ final class TaskListViewController: UIViewController {
         
         setupView()
 
+//        guard let appDelegate = appDelegate else { return }
+//        appDelegate.application?(<#T##application: UIApplication##UIApplication#>, supportedInterfaceOrientationsFor: <#T##UIWindow?#>)
+//        appDelegate.orientationMask = .portrait
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -66,10 +68,7 @@ final class TaskListViewController: UIViewController {
     
     func updateTableView(_ type: UpdateType) {
         
-        DDLogInfo("updating at \(String(describing: lastIndexPath))")
         fileCache.loadData()
-        
-        print("NEWITEMS: \(fileCache.items.map({ String($0.text.prefix(5)) }))")
         
         switch type {
         case .refresh:
@@ -98,6 +97,11 @@ final class TaskListViewController: UIViewController {
 
 extension TaskListViewController: TaskListViewOutput, OneTaskViewControllerDelegate {
     
+    enum UpdateType {
+        case refresh
+        case remove
+    }
+    
     func changeIsDone(_ indexPath: IndexPath?) {
         guard let row = indexPath?.row else { return }
         
@@ -115,7 +119,6 @@ extension TaskListViewController: TaskListViewOutput, OneTaskViewControllerDeleg
     }
     
     func willDismiss() {
-        print(#function)
         updateTableView(.refresh)
     }
     

@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         fileLogger.rollingFrequency = 60 * 60 * 24
         fileLogger.logFileManager.maximumNumberOfLogFiles = 10
         DDLog.add(fileLogger)
-        print(fileLogger.logFileManager.sortedLogFilePaths)
+        DDLogInfo(fileLogger.logFileManager.sortedLogFilePaths)
         
         // let generalService = GeneralService(with: MockNetworkService(), fileCacheService: MockFileCacheService())
         // generalService.update()

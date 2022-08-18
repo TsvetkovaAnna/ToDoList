@@ -43,7 +43,7 @@ final class OneTaskViewController: UIViewController {
         
         guard let text = textView.text else { return nil }
         
-        let importance: Importance// = .basic
+        let importance: ToDoItem.Importance// = .basic
 
         switch segment.selectedSegmentIndex {
         case 0:
@@ -55,8 +55,6 @@ final class OneTaskViewController: UIViewController {
         default:
             importance = .basic
         }
-        
-        print("importance:", importance)
         
         let deadline = switcher.isOn ? calendar.date : nil
         
@@ -277,10 +275,6 @@ final class OneTaskViewController: UIViewController {
             calendar.date = deadline
         }
         
-        //print("empty", self.textView.isEmpty)
-        DDLogInfo("empty \(self.textView.isEmpty)")
-        
-        print("toDo?.importance", toDo?.importance ?? "nil")
         segment.selectedSegmentIndex = 1
         
         guard let toDo = toDo else { return }
@@ -293,7 +287,6 @@ final class OneTaskViewController: UIViewController {
         case .important:
             segment.selectedSegmentIndex = 2
         }
-        print("toDo?.importance", toDo.importance)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -342,7 +335,7 @@ final class OneTaskViewController: UIViewController {
     
     @objc private func keyboardDidHide(_ notification: Notification) {
         view.removeGestureRecognizer(tapRecognizer)
-        print(#function)
+        
         var navBarHeight: CGFloat = 0
         if let barHeight = navigationController?.navigationBar.frame.height {//navigationController?.tabBarController?.tabBar.frame.height {
             navBarHeight = barHeight
@@ -444,7 +437,7 @@ final class OneTaskViewController: UIViewController {
 //        if let navController = navigationController {
 //            navController.popViewController(animated: true)
 //        } else {
-//            print("nav controller is nil")
+//            DDLogInfo("nav controller is nil")
 //        }
         dismiss(animated: true, completion: nil)
     }
@@ -453,7 +446,6 @@ final class OneTaskViewController: UIViewController {
         //returnToTaskList()
         //navigationController?.popViewController(animated: true)
         
-        print("delegate?.willDismiss(), delegate = ", delegate ?? "nil")
         delegate?.willDismiss()
         dismiss(animated: true)
     }

@@ -56,7 +56,6 @@ class PlaceholderTextView: UITextView, UITextViewDelegate {
     
     override func becomeFirstResponder() -> Bool {
         super.becomeFirstResponder()
-        print(#function)
         if isPlaceholderState {
             setTextViewReady()
         }
@@ -66,27 +65,23 @@ class PlaceholderTextView: UITextView, UITextViewDelegate {
     
     override func resignFirstResponder() -> Bool {
         super.resignFirstResponder()
-        print(#function)
         checkForPlaceholder()
         return true
     }
 
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        print(text.count)
         !text.isEmpty ? setTextViewReady() : checkForPlaceholder()
         
         return true
     }
     
     func textViewDidChangeSelection(_ textView: UITextView) {
-        print(#function)
         if isPlaceholderState {
             setTextViewPlaceholder()
         }
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        print(#function)
         checkForPlaceholder()
         changedClosure?()
     }

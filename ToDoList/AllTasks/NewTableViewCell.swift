@@ -84,7 +84,7 @@ class NewTableViewCell: UITableViewCell {
 //    }()
 //
 //    @objc private func openTask() {
-//        print("shevron pushed")
+//        DDLogInfo("shevron pushed")
 //    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

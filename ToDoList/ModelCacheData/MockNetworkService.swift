@@ -12,20 +12,25 @@ enum Request {
     case get, post
 }
 
+enum NetworkError: Error {
+    case noConnection
+    case badParsing
+}
+
 class MockNetworkService: NetworkService {
     
     let baseURL = URL(string: "https://google.com/request/")
     
-    func getAllTodoItems(completion: @escaping ([ToDoItem]?) -> Void) {
+    func getAllTodoItems(completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
         
         guard let url = baseURL?.appendingPathComponent("getAll") else { return }
         
-        request(.get, url: url) { items in
-            completion(items)
+        request(.get, url: url) { result in
+            completion(result)
         }
     }
     
-    func saveAllTodoItems(_ items: [ToDoItem], completion: @escaping ([ToDoItem]?) -> Void) {
+    func saveAllTodoItems(_ items: [ToDoItem], completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
         
         guard let url = baseURL?.appendingPathComponent("saveAll"),
               let json = ToDoItemList.json(fromItems: items) else { return }
@@ -34,30 +39,30 @@ class MockNetworkService: NetworkService {
             "list": json
         ]
         
-        request(.post, url: url, parameters: parameters) { items in
-            completion(items)
+        request(.post, url: url, parameters: parameters) { result in
+            completion(result)
         }
     }
     
-    func addTodoItem(_ item: ToDoItem, completion: @escaping ([ToDoItem]?) -> Void) {
+    func addTodoItem(_ item: ToDoItem, completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
         
         guard let url = baseURL?.appendingPathComponent("add") else { return }
         
-        request(.post, url: url, parameters: item.json) { items in
-            completion(items)
+        request(.post, url: url, parameters: item.json) { result in
+            completion(result)
         }
     }
     
-    func editTodoItem(_ item: ToDoItem, completion: @escaping ([ToDoItem]?) -> Void) {
+    func editTodoItem(_ item: ToDoItem, completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
         
         guard let url = baseURL?.appendingPathComponent("edit") else { return }
         
-        request(.post, url: url, parameters: item.json) { items in
-            completion(items)
+        request(.post, url: url, parameters: item.json) { result in
+            completion(result)
         }
     }
     
-    func deleteTodoItem(at id: String, completion: @escaping ([ToDoItem]?) -> Void) {
+    func deleteTodoItem(at id: String, completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
         
         guard let url = baseURL?.appendingPathComponent("delete") else { return }
         
@@ -65,24 +70,28 @@ class MockNetworkService: NetworkService {
             "id": id
         ]
         
-        request(.post, url: url, parameters: parameters) { items in
-            completion(items)
+        request(.post, url: url, parameters: parameters) { result in
+            completion(result)
         }
     }
     
-    func request(_ type: Request, url: URL, parameters: [String: Any]? = nil, completion: @escaping ([ToDoItem]?) -> Void) {
-        mockCompletion { items in
-            completion(items)
+    func request(_ type: Request, url: URL, parameters: [String: Any]? = nil, completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
+        mockCompletion { result in
+            completion(result)
         }
     }
     
-    func mockCompletion(completion: @escaping ([ToDoItem]?) -> Void) {
+    func mockCompletion(completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
         mockLeftOffClosure {
             if self.isConnectionAvailable() {
                 guard let mockServerData = MockServer.mockServerData else { return }
-                completion(mockServerData.parseToItems())
+                guard let parsedItems = mockServerData.parseToItems() else {
+                    completion(.failure(NetworkError.badParsing))
+                    return
+                }
+                completion(.success(parsedItems))
             } else {
-                completion(nil)
+                completion(.failure(NetworkError.noConnection))
             }
         }
     }
@@ -108,7 +117,7 @@ class MockNetworkService: NetworkService {
                 return true
             }
         } catch {
-            print(error)
+            DDLogInfo(error)
         }
 
         return false*/

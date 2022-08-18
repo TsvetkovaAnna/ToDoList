@@ -46,7 +46,6 @@ class TaskListView: UIView {
         self.deleteAction = deleteAction
         super.init(frame: frame)
         setupView()
-        print("init items: \(todoItems)")
         //self.addGestureRecognizer(tapRecognizer)
     }
     
@@ -196,7 +195,7 @@ extension TaskListView: TaskListViewInput {
     
 //    func reloadData() {
 //        tableView.reloadData()
-//        print("should load")
+//        DDLogInfo("should load")
 //    }
 }
 

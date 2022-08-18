@@ -16,7 +16,7 @@
 		951D37BB2894546000DA3BEC /* ToDoListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D37BA2894546000DA3BEC /* ToDoListTests.swift */; };
 		951D37C52894546000DA3BEC /* ToDoListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D37C42894546000DA3BEC /* ToDoListUITests.swift */; };
 		951D37C72894546000DA3BEC /* ToDoListUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D37C62894546000DA3BEC /* ToDoListUITestsLaunchTests.swift */; };
-		951D37D42894608800DA3BEC /* ToDoItemModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D37D32894608800DA3BEC /* ToDoItemModel.swift */; };
+		951D37D42894608800DA3BEC /* ToDoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D37D32894608800DA3BEC /* ToDoItem.swift */; };
 		951D37D8289460E100DA3BEC /* fileJSON.json in Resources */ = {isa = PBXBuildFile; fileRef = 951D37D7289460E100DA3BEC /* fileJSON.json */; };
 		951D37DA2895C41300DA3BEC /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 951D37D92895C41300DA3BEC /* .gitignore */; };
 		95563EB828A0613700ADA9E7 /* PlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95563EB728A0613700ADA9E7 /* PlaceholderTextView.swift */; };
@@ -37,6 +37,7 @@
 		9585859628A7DB5000DFEEC4 /* GeneralMockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9585859528A7DB5000DFEEC4 /* GeneralMockService.swift */; };
 		95D84CA22896F1840001AE51 /* MathFunc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D84CA12896F1840001AE51 /* MathFunc.swift */; };
 		95D84CA42897243B0001AE51 /* IndentTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D84CA32897243B0001AE51 /* IndentTextField.swift */; };
+		95F5BCA728AE8AEE00E31DEB /* NetworkingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F5BCA628AE8AEE00E31DEB /* NetworkingService.swift */; };
 		95F621F328A945ED0006FE63 /* MockTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F621F228A945ED0006FE63 /* MockTest.swift */; };
 		95F621F528A9527D0006FE63 /* MockServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F621F428A9527D0006FE63 /* MockServer.swift */; };
 		95F621F728A959230006FE63 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F621F628A959230006FE63 /* Data+Extensions.swift */; };
@@ -78,7 +79,7 @@
 		951D37C02894546000DA3BEC /* ToDoListUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ToDoListUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		951D37C42894546000DA3BEC /* ToDoListUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoListUITests.swift; sourceTree = "<group>"; };
 		951D37C62894546000DA3BEC /* ToDoListUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoListUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		951D37D32894608800DA3BEC /* ToDoItemModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoItemModel.swift; sourceTree = "<group>"; };
+		951D37D32894608800DA3BEC /* ToDoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoItem.swift; sourceTree = "<group>"; };
 		951D37D7289460E100DA3BEC /* fileJSON.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = fileJSON.json; sourceTree = "<group>"; };
 		951D37D92895C41300DA3BEC /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; name = .gitignore; path = ToDoList/.gitignore; sourceTree = "<group>"; };
 		95563EB728A0613700ADA9E7 /* PlaceholderTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderTextView.swift; sourceTree = "<group>"; };
@@ -100,6 +101,7 @@
 		9585859528A7DB5000DFEEC4 /* GeneralMockService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralMockService.swift; sourceTree = "<group>"; };
 		95D84CA12896F1840001AE51 /* MathFunc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathFunc.swift; sourceTree = "<group>"; };
 		95D84CA32897243B0001AE51 /* IndentTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndentTextField.swift; sourceTree = "<group>"; };
+		95F5BCA628AE8AEE00E31DEB /* NetworkingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingService.swift; sourceTree = "<group>"; };
 		95F621F228A945ED0006FE63 /* MockTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTest.swift; sourceTree = "<group>"; };
 		95F621F428A9527D0006FE63 /* MockServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServer.swift; sourceTree = "<group>"; };
 		95F621F628A959230006FE63 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
@@ -245,8 +247,9 @@
 				9585859528A7DB5000DFEEC4 /* GeneralMockService.swift */,
 				95F621F228A945ED0006FE63 /* MockTest.swift */,
 				95563EC528A0626200ADA9E7 /* FileCache.swift */,
-				951D37D32894608800DA3BEC /* ToDoItemModel.swift */,
+				951D37D32894608800DA3BEC /* ToDoItem.swift */,
 				95F621F628A959230006FE63 /* Data+Extensions.swift */,
+				95F5BCA628AE8AEE00E31DEB /* NetworkingService.swift */,
 			);
 			path = ModelCacheData;
 			sourceTree = "<group>";
@@ -539,7 +542,8 @@
 				95D84CA22896F1840001AE51 /* MathFunc.swift in Sources */,
 				95F621F728A959230006FE63 /* Data+Extensions.swift in Sources */,
 				95563EC428A0623E00ADA9E7 /* NewTableViewCell.swift in Sources */,
-				951D37D42894608800DA3BEC /* ToDoItemModel.swift in Sources */,
+				95F5BCA728AE8AEE00E31DEB /* NetworkingService.swift in Sources */,
+				951D37D42894608800DA3BEC /* ToDoItem.swift in Sources */,
 				95563EBC28A061A500ADA9E7 /* TransitionNavigationController.swift in Sources */,
 				95D84CA42897243B0001AE51 /* IndentTextField.swift in Sources */,
 				95F621F528A9527D0006FE63 /* MockServer.swift in Sources */,
@@ -728,7 +732,7 @@
 				INFOPLIST_FILE = ToDoList/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -756,7 +760,7 @@
 				INFOPLIST_FILE = ToDoList/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
