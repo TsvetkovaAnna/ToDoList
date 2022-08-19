@@ -39,6 +39,7 @@ struct Constants {
         static let headline = UIFont.systemFont(ofSize: 17, weight: .semibold)
         static let body = UIFont.systemFont(ofSize: 17)
         static let subhead = UIFont.systemFont(ofSize: 15)
+        static let subheadBold = UIFont.boldSystemFont(ofSize: 15)
         static let footnote = UIFont.systemFont(ofSize: 13)
     }
     

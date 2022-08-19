@@ -5,6 +5,9 @@ protocol TaskListViewInput: AnyObject {
     func update(with items: [ToDoItem], deletingRow: IndexPath?, refreshingRow: IndexPath?)
 }
 
+// typealias TaskListViewAndHeaderInput = TaskListViewInput & HeaderInput
+typealias TaskListViewAndHeaderOutput = TaskListViewOutput & HeaderOutput
+
 protocol TaskListViewOutput: AnyObject {
     func didSelectItem(_ item: ToDoItem?, onCellFrame: CGRect?, indexPath: IndexPath?)
     func presentNewItem()
@@ -14,10 +17,11 @@ protocol TaskListViewOutput: AnyObject {
 final class TaskListViewController: UIViewController {
 
     let fileCache: FileCache
-    weak var delegate: TaskListViewInput?
-    //private weak var delegate2: TaskListViewReload?
+    weak var taskViewDelegate: TaskListViewInput?
+    weak var headerDelegate: HeaderInput?
     
     private var lastIndexPath: IndexPath?
+    private var isDoneShown = true
     
     var appDelegate: AppDelegate? {
         UIApplication().delegate as? AppDelegate
@@ -28,11 +32,17 @@ final class TaskListViewController: UIViewController {
         let view = TaskListView(frame: .zero, todoItems: fileCache.items, deleteAction: { indexPath in
             let item = self.fileCache.items[indexPath.row]
             self.fileCache.deleteItem(byId: item.id)
-            self.delegate?.update(with: self.fileCache.items, deletingRow: indexPath, refreshingRow: nil)
+            self.taskViewDelegate?.update(with: self.fileCache.items, deletingRow: indexPath, refreshingRow: nil)
+        }, completionWithHeader: { headerView in
+            headerView.delegate = self
+            self.headerDelegate = headerView
+            self.setHeaderDonesCount()
         })
-        delegate = view
+        
+        taskViewDelegate = view
         view.delegate = self
         view.translatesAutoresizingMaskIntoConstraints = false
+        
         return view
     }()
     
@@ -66,21 +76,32 @@ final class TaskListViewController: UIViewController {
         self.navigationController?.navigationBar.prefersLargeTitles = false
     }
     
+    func refreshTableViewRow() {
+        updateTableView(.refresh)
+    }
+    
     func updateTableView(_ type: UpdateType) {
         
         fileCache.loadData()
         
+        let items = isDoneShown ? fileCache.items : fileCache.items.filter({ $0.isDone == false })
+        
         switch type {
         case .refresh:
-            delegate?.update(with: fileCache.items, deletingRow: nil, refreshingRow: lastIndexPath)
+            taskViewDelegate?.update(with: items, deletingRow: nil, refreshingRow: lastIndexPath)
         case .remove:
-            delegate?.update(with: fileCache.items, deletingRow: lastIndexPath, refreshingRow: nil)
+            taskViewDelegate?.update(with: items, deletingRow: lastIndexPath, refreshingRow: nil)
+        case .refreshAll:
+            taskViewDelegate?.update(with: items, deletingRow: nil, refreshingRow: nil)
         }
+        
     }
     
     private func setupView() {
         
         title = "Мои дела"
+        //navigationItem.titleView?.backgroundColor?.withAlphaComponent(0.5)// = Constants.Colors.Support.navBarBlur
+        //navigationItem.titleView?.backgroundColor?.withAlphaComponent(0.8)
         view.backgroundColor = .init(_colorLiteralRed: 0.97, green: 0.97, blue: 0.95, alpha: 1.0)
         
         view.addSubview(viewTable)
@@ -92,14 +113,42 @@ final class TaskListViewController: UIViewController {
         
         NSLayoutConstraint.activate([tableTop, tableBottom, tableLeading, tableTrailing])
     }
+    
+    func setHeaderDonesCount() {
+        let donesCount = fileCache.items.filter { $0.isDone == true }.count
+        headerDelegate?.setDonesCount(donesCount)
+    }
 
 }
 
-extension TaskListViewController: TaskListViewOutput, OneTaskViewControllerDelegate {
+//extension TaskListView: HeaderOutput { //Где делегат?
+//    func showHideDoneInHeader() -> Int {
+//        var notDoneItems = [ToDoItem]()
+//        var doneItems = [ToDoItem]()
+//        for item in todoItems {
+//            if !item.isDone {
+//                notDoneItems.append(item)
+//            } else {
+//                doneItems.append(item)
+//            }
+//        }
+//        let doneCount = doneItems.count
+//        return doneCount
+//    }
+//}
+
+extension TaskListViewController: TaskListViewAndHeaderOutput, OneTaskViewControllerDelegate {
     
     enum UpdateType {
         case refresh
         case remove
+        case refreshAll
+    }
+    
+    func toggleShown() {
+        isDoneShown.toggle()
+        updateTableView(.refreshAll)
+        headerDelegate?.setShowHide(isDoneShown)
     }
     
     func changeIsDone(_ indexPath: IndexPath?) {
@@ -111,7 +160,8 @@ extension TaskListViewController: TaskListViewOutput, OneTaskViewControllerDeleg
         //fileCache.items.remove(at: row)
         //fileCache.items.insert(fileCache.items[row].reverted, at: row)
         
-        updateTableView(.refresh)
+        setHeaderDonesCount()
+        refreshTableViewRow()
     }
     
     func updateTableViewDeletingRow() {
@@ -119,7 +169,7 @@ extension TaskListViewController: TaskListViewOutput, OneTaskViewControllerDeleg
     }
     
     func willDismiss() {
-        updateTableView(.refresh)
+        refreshTableViewRow()
     }
     
     func presentNewItem() {
@@ -146,12 +196,5 @@ extension TaskListViewController: TaskListViewOutput, OneTaskViewControllerDeleg
         let navigationController = UINavigationController(rootViewController: oneTaskController)
         present(navigationController, animated: true)
     }
+  
 }
-
-//extension TaskListViewController: OneTaskViewControllerDelegate {
-//    func reloadData() {
-//        delegate?.reloadData()
-//    }
-//
-//
-//}

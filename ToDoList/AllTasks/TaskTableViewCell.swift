@@ -86,7 +86,8 @@ class TaskTableViewCell: UITableViewCell {
     private lazy var calendarImage: UIImageView = {
         let image = UIImageView()
         image.contentMode = .left
-        image.image = Constants.Images.calendar
+        image.image = UIImage(systemName: "calendar", withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .bold))?.withTintColor(UIColor(red: 0, green: 0, blue: 0, alpha: 0.3), renderingMode: .alwaysOriginal)
+        //image.image = Constants.Images.calendar
         //image.sizeThatFits(CGSize(width: 13, height: 12))
         image.isHidden = true
         image.translatesAutoresizingMaskIntoConstraints = false

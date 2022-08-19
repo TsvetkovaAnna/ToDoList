@@ -1,35 +1,44 @@
 import UIKit
+import CocoaLumberjack
 
-class HeaderListView: UIView {
+protocol HeaderOutput: AnyObject { //хедер сообщает кому-то
+    func toggleShown()
+}
 
+protocol HeaderInput: AnyObject { //хереду сообщает кто-то
+    func setShowHide(_ isShown: Bool)
+    func setDonesCount(_ count: Int)
+}
+
+final class HeaderListView: UIView {
+
+    var delegate: HeaderOutput?
+    
     private lazy var doneLabelButtonHorizontalStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
-        stack.alignment = .center
-        stack.distribution = .fillEqually
+        //stack.alignment = .center
+        stack.distribution = .equalCentering
         stack.backgroundColor = Constants.Colors.Back.primary
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
     
-    var doneCount = 0
     private lazy var doneCountLabel: UILabel = {
         let label = UILabel()
-        label.text = "Выполнено - " + String(doneCount)
         label.font = Constants.Fonts.subhead
         label.textColor = Constants.Colors.Label.tertiary
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    var shownDoneTasks = false // ? нужно еще?
+    private var isShown = true
+    
     private lazy var showHideDoneTasksButton: UIButton = {
         let button = UIButton()
-        //button.titleLabel = shownDoneTasks ? "Показать" : "Скрыть"
-        button.setTitle("Показать", for: .normal)
-        button.setTitle("Скрыть", for: .disabled)
-        button.titleLabel?.font = Constants.Fonts.subhead
+        button.titleLabel?.font = Constants.Fonts.subheadBold
         button.setTitleColor(Constants.Colors.Color.blue, for: .normal)
+        button.addTarget(self, action: #selector(showHideDone), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -43,6 +52,18 @@ class HeaderListView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func setShowHideButton(_ isShown: Bool? = nil) {
+        let isShown = isShown ?? self.isShown
+        showHideDoneTasksButton.setTitle(isShown ? "Скрыть" : "Показать", for: .normal)
+    }
+    
+    @objc private func showHideDone() {
+        isShown.toggle()
+        // setShowHideButton()
+        delegate?.toggleShown()
+        DDLogInfo("Show tapped")
+    }
+    
     private func drawSelf() {
         self.addSubview(doneLabelButtonHorizontalStack)
         doneLabelButtonHorizontalStack.addArrangedSubview(doneCountLabel)
@@ -53,5 +74,18 @@ class HeaderListView: UIView {
         let xStack = doneLabelButtonHorizontalStack.bottomAnchor.constraint(equalTo: self.bottomAnchor)
         
         NSLayoutConstraint.activate([bottomStack, leadingStack, trailingStack, xStack])
+        
+        setShowHideButton()
+    }
+}
+
+extension HeaderListView: HeaderInput {
+    
+    func setShowHide(_ isShown: Bool) {
+        setShowHideButton(isShown)
+    }
+    
+    func setDonesCount(_ count: Int) {
+        doneCountLabel.text = "Выполнено - " + String(count)
     }
 }
