@@ -9,6 +9,10 @@ import Foundation
 
 protocol NetworkService {
     
+    func getTodoItem(
+        completion: @escaping (Result<[ToDoItem], Error>) -> Void
+    )
+    
     func getAllTodoItems(
         completion: @escaping (Result<[ToDoItem], Error>) -> Void
     )

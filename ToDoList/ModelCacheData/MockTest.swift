@@ -7,7 +7,7 @@
 
 import Foundation
 
-class MockNetworkService2 {
+class DefaultNetworkingService2 {
     
     private let fileCasheServise = MockFileCacheService2()
     

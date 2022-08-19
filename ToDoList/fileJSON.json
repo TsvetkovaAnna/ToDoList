@@ -4,9 +4,10 @@
             "text": "Call for receipt of grandmother cake",
             "importance": "low",
             "deadline": 1659203699,
-            "toDoDone": false,
-            "dateCreated": 1659203690,
-            "dateChanged": 1659203695
+            "done": false,
+            "created_at": 1659203690,
+            "changed_at": 1659203695,
+            "last_updated_by": "2349839028"
         },
         {
             "id": "Murmansk",

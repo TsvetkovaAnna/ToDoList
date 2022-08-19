@@ -16,7 +16,9 @@ protocol TaskListViewOutput: AnyObject {
 
 final class TaskListViewController: UIViewController {
 
-    let fileCache: FileCache
+    //let fileCache: FileCache
+    let generalService: GeneralService
+    
     weak var taskViewDelegate: TaskListViewInput?
     weak var headerDelegate: HeaderInput?
     
@@ -29,10 +31,11 @@ final class TaskListViewController: UIViewController {
     
     private lazy var viewTable: TaskListView = {
         
-        let view = TaskListView(frame: .zero, todoItems: fileCache.items, deleteAction: { indexPath in
-            let item = self.fileCache.items[indexPath.row]
-            self.fileCache.deleteItem(byId: item.id)
-            self.taskViewDelegate?.update(with: self.fileCache.items, deletingRow: indexPath, refreshingRow: nil)
+        let view = TaskListView(frame: .zero, todoItems: generalService.items, deleteAction: { indexPath in
+            let item = self.generalService.items[indexPath.row]
+            //self.fileCache.deleteItem(byId: item.id)
+            self.generalService.delete(item.id)
+            self.taskViewDelegate?.update(with: self.generalService.items, deletingRow: indexPath, refreshingRow: nil)
         }, completionWithHeader: { headerView in
             headerView.delegate = self
             self.headerDelegate = headerView
@@ -46,8 +49,13 @@ final class TaskListViewController: UIViewController {
         return view
     }()
     
-    init(fileCache: FileCache) {
-        self.fileCache = fileCache
+//    init(fileCache: FileCache) {
+//        self.fileCache = fileCache
+//        super.init(nibName: nil, bundle: nil)
+//    }
+    
+    init(generalService: GeneralService) {
+        self.generalService = generalService
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -82,17 +90,19 @@ final class TaskListViewController: UIViewController {
     
     func updateTableView(_ type: UpdateType) {
         
-        fileCache.loadData()
+        //fileCache.loadData()
         
-        let items = isDoneShown ? fileCache.items : fileCache.items.filter({ $0.isDone == false })
-        
-        switch type {
-        case .refresh:
-            taskViewDelegate?.update(with: items, deletingRow: nil, refreshingRow: lastIndexPath)
-        case .remove:
-            taskViewDelegate?.update(with: items, deletingRow: lastIndexPath, refreshingRow: nil)
-        case .refreshAll:
-            taskViewDelegate?.update(with: items, deletingRow: nil, refreshingRow: nil)
+        self.generalService.update {
+            let items = self.isDoneShown ? self.generalService.items : self.generalService.items.filter({ $0.isDone == false })
+            
+            switch type {
+            case .refresh:
+                self.taskViewDelegate?.update(with: items, deletingRow: nil, refreshingRow: self.lastIndexPath)
+            case .remove:
+                self.taskViewDelegate?.update(with: items, deletingRow: self.lastIndexPath, refreshingRow: nil)
+            case .refreshAll:
+                self.taskViewDelegate?.update(with: items, deletingRow: nil, refreshingRow: nil)
+            }
         }
         
     }
@@ -115,7 +125,7 @@ final class TaskListViewController: UIViewController {
     }
     
     func setHeaderDonesCount() {
-        let donesCount = fileCache.items.filter { $0.isDone == true }.count
+        let donesCount = generalService.items.filter { $0.isDone == true }.count
         headerDelegate?.setDonesCount(donesCount)
     }
 
@@ -154,11 +164,12 @@ extension TaskListViewController: TaskListViewAndHeaderOutput, OneTaskViewContro
     func changeIsDone(_ indexPath: IndexPath?) {
         guard let row = indexPath?.row else { return }
         
-        let revertedItem = fileCache.items[row].reverted
-        fileCache.refreshItem(revertedItem, byId: revertedItem.id)
+        let revertedItem = generalService.items[row].reverted
+        //fileCache.refreshItem(revertedItem, byId: revertedItem.id)
+        generalService.edit(revertedItem)
         
-        //fileCache.items.remove(at: row)
-        //fileCache.items.insert(fileCache.items[row].reverted, at: row)
+        //generalService.items.remove(at: row)
+        //generalService.items.insert(generalService.items[row].reverted, at: row)
         
         setHeaderDonesCount()
         refreshTableViewRow()

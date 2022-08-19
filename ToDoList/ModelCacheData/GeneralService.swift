@@ -8,7 +8,7 @@
 import Foundation
 import CocoaLumberjack
 
-class GeneralService {
+class GeneralService: GeneralServiceProtocol {
     
     let networkService: NetworkService
     let fileCacheService: FileCacheService
@@ -18,7 +18,7 @@ class GeneralService {
         return url.appendingPathComponent("ToDoItems.txt")
     }
     
-    private(set) var items = [ToDoItem]()
+    var items = [ToDoItem]()
     
     init(with networkService: NetworkService, fileCacheService: FileCacheService) {
         self.networkService = networkService
@@ -86,7 +86,7 @@ class GeneralService {
         }
     }
     
-    func update(_ completion: @escaping () -> Void) { // ?
+    func update(_ completion: @escaping () -> Void) { // ?laod
         perfomInOtherThread {
             guard let cacheURL = self.cacheUrl else { return }
             
