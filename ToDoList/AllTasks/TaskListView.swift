@@ -1,8 +1,8 @@
 import UIKit
 
-class TaskListView: UIView {
+final class TaskListView: UIView {
     
-    weak var delegate: TaskListViewOutput?
+    weak var delegate: TaskListViewAndHeaderOutput?
     private let defaultCellIdentifier = "DefaultCell"
     private var todoItems: [ToDoItem]
     private let deleteAction: (IndexPath) -> Void
@@ -10,43 +10,60 @@ class TaskListView: UIView {
     private lazy var addButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .clear
+        button.layer.shadowOffset = CGSize(width: 0, height: 4)
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowRadius = 3
+        button.layer.shadowOpacity = 0.5
         button.setImage(Constants.Images.plusCircleFill, for: .normal)
         button.addTarget(self, action: #selector(createNewTask), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
+    private lazy var plus: UIImageView = {
+        let plus = UIImageView(image: UIImage(named: "plus")?.withTintColor(.white))
+        plus.backgroundColor = .cyan
+        plus.translatesAutoresizingMaskIntoConstraints = false
+        return plus
+    }()
+    
     private lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .grouped)
+        let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.backgroundColor = Constants.Colors.Back.primary
-        tableView.layer.cornerRadius = 16
+        tableView.layer.borderColor = UIColor.gray.cgColor
+//        tableView.layer.borderWidth = 1
+//        tableView.layer.cornerRadius = 16
+//        tableView.clipsToBounds = true
         tableView.layer.borderColor = UIColor.white.cgColor
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        //tableView.dataSource = self
-        //tableView.delegate = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: defaultCellIdentifier)
         tableView.register(NewTableViewCell.self, forCellReuseIdentifier: NewTableViewCell.identifier)
         tableView.register(TaskTableViewCell.self, forCellReuseIdentifier: TaskTableViewCell.identifier)
         tableView.allowsSelection = true
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         //tableView.estimatedRowHeight = 56
         return tableView
     }()
     
-    private lazy var tableHeaderView: HeaderListView = {
-        let tableHeaderView = HeaderListView(frame: .zero)
-        //tableHeaderView.delegate = self
-        tableHeaderView.translatesAutoresizingMaskIntoConstraints = false
-        return tableHeaderView
+//    private lazy var tableHeaderView: HeaderListView = {
+//        let tableHeaderView = HeaderListView()
+//
+//        tableHeaderView.delegate = self
+//        tableHeaderView.translatesAutoresizingMaskIntoConstraints = false
+//        return tableHeaderView
+//    }()
+    
+    lazy var headerListView: HeaderListView = {
+        HeaderListView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
     }()
     
-    init(frame: CGRect, todoItems: [ToDoItem], deleteAction: @escaping (IndexPath) -> Void) {
+    init(frame: CGRect, todoItems: [ToDoItem], deleteAction: @escaping (IndexPath) -> Void, completionWithHeader: @escaping (HeaderListView) -> Void) {
         self.todoItems = todoItems
         self.deleteAction = deleteAction
         super.init(frame: frame)
         setupView()
-        print("init items: \(todoItems)")
+        completionWithHeader(headerListView)
         //self.addGestureRecognizer(tapRecognizer)
     }
     
@@ -73,6 +90,12 @@ class TaskListView: UIView {
         let addBottom = addButton.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -54)
         let addCenterX = addButton.centerXAnchor.constraint(equalTo: self.centerXAnchor)
         
+        //addButton.bringSubviewToFront(plus)
+        
+//        let plusX = plus.centerXAnchor.constraint(equalTo: self.centerXAnchor)
+//        let plusBottom = plus.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -54)
+//        let plusH = plus.heightAnchor.constraint(equalToConstant: 22)
+        
         NSLayoutConstraint.activate([tableTop, tableBottom, tableLeading, tableTrailing, addBottom, addCenterX])
     }
 
@@ -89,7 +112,7 @@ extension TaskListView: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        section == 0 ? tableHeaderView : nil
+        section == 0 ? headerListView : nil
     }
     
     func isLastCell(at indexPath: IndexPath) -> Bool {
@@ -129,7 +152,7 @@ extension TaskListView: UITableViewDataSource, UITableViewDelegate {
         }
         
         editAction.image = UIImage(systemName: "info.circle")
-        editAction.backgroundColor = Constants.Colors.Color.gray
+        editAction.backgroundColor = Constants.Colors.Color.lightGray
         
         let deleteAction = UIContextualAction(style: .destructive, title: nil) { (_, _, completion) in
             self.deleteAction(indexPath)
@@ -196,7 +219,7 @@ extension TaskListView: TaskListViewInput {
     
 //    func reloadData() {
 //        tableView.reloadData()
-//        print("should load")
+//        DDLogInfo("should load")
 //    }
 }
 

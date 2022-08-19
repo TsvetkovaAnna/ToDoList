@@ -46,7 +46,7 @@ final class FileCache {
     
     func refreshItem(_ item: ToDoItem, byId: String) {
         guard let index = items.firstIndex(where: { $0.id == byId }) else { return }
-        items[index] = item
+        items[index] = item.updated
     }
     
     func saveData(_ toURL: URL? = nil) {
@@ -64,7 +64,7 @@ final class FileCache {
     
     func loadData(_ fromURL: URL? = nil) {
         
-        print(#function)
+        DDLogInfo(#function)
         
         var parsed: [ToDoItem]?
         
@@ -97,7 +97,7 @@ final class FileCache {
             let cacheData = try Data(contentsOf: cacheUrl)
             return cacheData.parseToItems()
         } catch {
-            print("PARSERR", error)
+            DDLogInfo(error)
         }
         
         return nil
@@ -109,7 +109,7 @@ final class FileCache {
             let data = try Data(contentsOf: URL(fileURLWithPath: pathForFile))
             return data.parseToItems()
         } catch {
-            print(error)
+            DDLogInfo(error)
         }
         
         return nil

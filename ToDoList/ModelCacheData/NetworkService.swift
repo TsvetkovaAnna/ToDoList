@@ -10,26 +10,26 @@ import Foundation
 protocol NetworkService {
     
     func getAllTodoItems(
-        completion: @escaping ([ToDoItem]?) -> Void
+        completion: @escaping (Result<[ToDoItem], Error>) -> Void
     )
     
     func saveAllTodoItems(
         _ items: [ToDoItem],
-        completion: @escaping ([ToDoItem]?) -> Void
+        completion: @escaping (Result<[ToDoItem], Error>) -> Void
     )
     
     func addTodoItem(
         _ item: ToDoItem,
-        completion: @escaping ([ToDoItem]?) -> Void
+        completion: @escaping (Result<[ToDoItem], Error>) -> Void
     )
     
     func editTodoItem(
         _ item: ToDoItem,
-        completion: @escaping ([ToDoItem]?) -> Void
+        completion: @escaping (Result<[ToDoItem], Error>) -> Void
     )
     
     func deleteTodoItem(
         at id: String,
-        completion: @escaping ([ToDoItem]?) -> Void
+        completion: @escaping (Result<[ToDoItem], Error>) -> Void
     )
 }

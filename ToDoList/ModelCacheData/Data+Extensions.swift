@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CocoaLumberjack
 
 extension Data {
     func parseToItems() -> [ToDoItem]? {
@@ -14,7 +15,7 @@ extension Data {
             else { return nil }
             return ToDoItemList(dict).todoItems
         } catch {
-            print("PARSERR", error)
+            DDLogInfo(error)
         }
         
         return nil

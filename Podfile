@@ -10,13 +10,4 @@ target 'ToDoList' do
   pod 'SwiftLint'
   # pod 'ReachabilitySwift'
 
-  target 'ToDoListTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
-  target 'ToDoListUITests' do
-    # Pods for testing
-  end
-
 end
