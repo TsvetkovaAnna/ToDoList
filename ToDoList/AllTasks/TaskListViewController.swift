@@ -23,9 +23,9 @@ final class TaskListViewController: UIViewController {
     private var lastIndexPath: IndexPath?
     private var isDoneShown = true
     
-    var appDelegate: AppDelegate? {
-        UIApplication().delegate as? AppDelegate
-    }
+//    var appDelegate: AppDelegate? {
+//        UIApplication().delegate as? AppDelegate
+//    }
     
     private lazy var viewTable: TaskListView = {
         
