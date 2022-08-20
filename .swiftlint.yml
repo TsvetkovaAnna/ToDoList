@@ -30,7 +30,7 @@ identifier_name:
     warning: 1
  
 line_length:
-  warning: 300
+  warning: 400
   error: 600
   ignores_function_declarations: true
   ignores_comments: true

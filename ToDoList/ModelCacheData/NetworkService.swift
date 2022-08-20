@@ -10,6 +10,7 @@ import Foundation
 protocol NetworkService {
     
     func getTodoItem(
+        _ id: String,
         completion: @escaping (Result<[ToDoItem], Error>) -> Void
     )
     

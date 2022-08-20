@@ -84,6 +84,10 @@ extension ToDoItem {
     static func parse(json: [String: Any]) -> ToDoItem? {
        ToDoItem(dict: json)
     }
+    
+    var likeElement: Element {
+        Element(id: id, text: text, deadline: Int(deadline?.timeIntervalSince1970 ?? 0), importance: importance.rawValue, done: isDone, color: "white", createdAt: Int(dateCreated.timeIntervalSince1970), changedAt: Int(dateChanged?.timeIntervalSince1970 ?? 0), lastUpdatedBy: UIDevice.current.identifierForVendor!.uuidString)
+    }
 }
 
 struct ToDoItemList {

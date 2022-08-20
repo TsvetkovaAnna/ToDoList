@@ -37,6 +37,7 @@
 		9585859628A7DB5000DFEEC4 /* GeneralService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9585859528A7DB5000DFEEC4 /* GeneralService.swift */; };
 		95CD5CB428B0426200C1E2A1 /* GeneralServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CD5CB328B0426200C1E2A1 /* GeneralServiceProtocol.swift */; };
 		95CD5CB628B0454400C1E2A1 /* NetworkingToDoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CD5CB528B0454400C1E2A1 /* NetworkingToDoItem.swift */; };
+		95CD5CB828B14CAF00C1E2A1 /* APINetworkingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CD5CB728B14CAF00C1E2A1 /* APINetworkingService.swift */; };
 		95D84CA22896F1840001AE51 /* MathFunc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D84CA12896F1840001AE51 /* MathFunc.swift */; };
 		95D84CA42897243B0001AE51 /* IndentTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D84CA32897243B0001AE51 /* IndentTextField.swift */; };
 		95F5BCA728AE8AEE00E31DEB /* NetworkingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F5BCA628AE8AEE00E31DEB /* NetworkingService.swift */; };
@@ -103,6 +104,7 @@
 		9585859528A7DB5000DFEEC4 /* GeneralService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralService.swift; sourceTree = "<group>"; };
 		95CD5CB328B0426200C1E2A1 /* GeneralServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralServiceProtocol.swift; sourceTree = "<group>"; };
 		95CD5CB528B0454400C1E2A1 /* NetworkingToDoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingToDoItem.swift; sourceTree = "<group>"; };
+		95CD5CB728B14CAF00C1E2A1 /* APINetworkingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APINetworkingService.swift; sourceTree = "<group>"; };
 		95D84CA12896F1840001AE51 /* MathFunc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathFunc.swift; sourceTree = "<group>"; };
 		95D84CA32897243B0001AE51 /* IndentTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndentTextField.swift; sourceTree = "<group>"; };
 		95F5BCA628AE8AEE00E31DEB /* NetworkingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingService.swift; sourceTree = "<group>"; };
@@ -246,6 +248,7 @@
 				9585858D28A68B9600DFEEC4 /* NetworkService.swift */,
 				9585858F28A68CB400DFEEC4 /* FileCacheService.swift */,
 				9585859328A6969200DFEEC4 /* MockNetworkService.swift */,
+				95CD5CB728B14CAF00C1E2A1 /* APINetworkingService.swift */,
 				95F621F428A9527D0006FE63 /* MockServer.swift */,
 				9585859128A68FD200DFEEC4 /* MockFileCacheService.swift */,
 				9585859528A7DB5000DFEEC4 /* GeneralService.swift */,
@@ -545,6 +548,7 @@
 				9585858E28A68B9600DFEEC4 /* NetworkService.swift in Sources */,
 				9585859228A68FD200DFEEC4 /* MockFileCacheService.swift in Sources */,
 				9585859028A68CB400DFEEC4 /* FileCacheService.swift in Sources */,
+				95CD5CB828B14CAF00C1E2A1 /* APINetworkingService.swift in Sources */,
 				95D84CA22896F1840001AE51 /* MathFunc.swift in Sources */,
 				95F621F728A959230006FE63 /* Data+Extensions.swift in Sources */,
 				95563EC428A0623E00ADA9E7 /* NewTableViewCell.swift in Sources */,

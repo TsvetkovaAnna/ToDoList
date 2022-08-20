@@ -23,13 +23,10 @@ class DefaultNetworkingService: NetworkService {
     let urlSession: URLSession
     
     init() {
-        //super.init()
-        let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = 30
-        self.urlSession = URLSession(configuration: configuration)
+        self.urlSession = URLSession(configuration: .default)
     }
     
-    func getTodoItem(completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
+    func getTodoItem(_ id: String, completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
         
         guard let url = baseURL?.appendingPathComponent("get") else { return }
         
