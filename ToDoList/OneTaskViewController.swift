@@ -1,8 +1,15 @@
 import UIKit
 import CocoaLumberjack
 
+enum TaskAction {
+    case none
+    case adding
+    case deleting
+    case editing
+}
+
 protocol OneTaskViewControllerDelegate: AnyObject {
-    func willDismiss()
+    func willDismiss(after: TaskAction)
     func updateTableViewDeletingRow()
 }
 
@@ -440,6 +447,7 @@ final class OneTaskViewController: UIViewController {
 //        } else {
 //            DDLogInfo("nav controller is nil")
 //        }
+        delegate?.willDismiss(after: .none)
         dismiss(animated: true, completion: nil)
     }
     
@@ -447,7 +455,7 @@ final class OneTaskViewController: UIViewController {
         //returnToTaskList()
         //navigationController?.popViewController(animated: true)
         
-        delegate?.willDismiss()
+        //delegate?.willDismiss(after: action)
         dismiss(animated: true)
     }
     
@@ -455,15 +463,20 @@ final class OneTaskViewController: UIViewController {
         
         guard let currentToDo = currentToDo else { return }
         
-        if let toDo = toDo {
+        if let todo = toDo {
             //cache.refreshItem(currentToDo, byId: toDo.id)
-            generalService.edit(currentToDo)
+            let item = ToDoItem(id: todo.id, text: currentToDo.text, importance: currentToDo.importance, deadline: currentToDo.deadline, isDone: todo.isDone, dateCreated: todo.dateCreated, dateChanged: currentToDo.dateChanged)
+            generalService.edit(item) {
+                self.delegate?.willDismiss(after: .editing)
+                self.close()
+            }
         } else {
             //cache.addItem(item: currentToDo)
-            generalService.add(currentToDo)
+            generalService.add(currentToDo) {
+                self.delegate?.willDismiss(after: .adding)
+                self.close()
+            }
         }
-        
-        close()
     }
     
     @objc private func didTapDeleteButton() {
@@ -472,6 +485,7 @@ final class OneTaskViewController: UIViewController {
         //cache.deleteItem(byId: id)
         generalService.delete(id) {
             self.delegate?.updateTableViewDeletingRow()
+            //self.delegate?.willDismiss(after: .deleting)
             self.close()
         }
     }

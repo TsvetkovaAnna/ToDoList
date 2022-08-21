@@ -45,7 +45,7 @@ struct ToDoItem: Equatable {
         self.deadline = deadline
         self.isDone = false
         self.dateCreated = Date()
-        self.dateChanged = nil
+        self.dateChanged = Date()
     }
     
     private init(dict: [String: Any]) {

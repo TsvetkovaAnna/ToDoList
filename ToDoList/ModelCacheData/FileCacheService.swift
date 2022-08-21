@@ -17,7 +17,7 @@ protocol FileCacheService {
     )
     
     func load(
-        from file: String,
+        from url: URL,
         completion: @escaping ([ToDoItem]) -> Void
     )
     

@@ -29,35 +29,39 @@ class GeneralService: GeneralServiceProtocol {
     func load(completion: @escaping () -> Void) {
         guard let cacheURL = self.cacheUrl else { return }
             
-        self.fileCacheService.load(from: cacheURL.path) { [weak self] cacheItems in
+        self.fileCacheService.load(from: cacheURL) { [weak self] cacheItems in
             guard let self = self else { return }
             self.items = cacheItems
             completion()
         }
     }
     
-    func edit(_ item: ToDoItem) {
+    func edit(_ item: ToDoItem, _ completion: @escaping () -> Void) {
         print(#function)
         perfomInOtherThread {
             self.update {
                 self.networkService.editTodoItem(item) { result in
                     self.perfomInMainThread {
                         self.fileCacheService.edit(item)
-                        self.saveChangeToFileCache(result)
+                        self.saveChangeToFileCache(result) {
+                            completion()
+                        }
                     }
                 }
             }
         }
     }
     
-    func add(_ newItem: ToDoItem) {
+    func add(_ newItem: ToDoItem, _ completion: @escaping () -> Void) {
         print(#function)
         perfomInOtherThread {
             self.update {
                 self.networkService.addTodoItem(newItem) { result in
                     self.perfomInMainThread {
                         self.fileCacheService.add(newItem)
-                        self.saveChangeToFileCache(result)
+                        self.saveChangeToFileCache(result) {
+                            completion()
+                        }
                     }
                 }
             }
@@ -73,8 +77,10 @@ class GeneralService: GeneralServiceProtocol {
                         self.fileCacheService.delete(id: at)
                         print("c:", self.fileCacheService.fileCache.items.count)
 //                        self.fileCacheService.save(to: self.cacheUrl!.path) { _ in
-                            self.saveChangeToFileCache(result)
+                        self.saveChangeToFileCache(result) {
                             completion()
+                        }
+                            
 //                        }
                     }
                 }
@@ -125,10 +131,10 @@ class GeneralService: GeneralServiceProtocol {
         }
     }
     
-    func saveChangeToFileCache(_ result: Result<ToDoItem, Error>) {
+    func saveChangeToFileCache(_ result: Result<ToDoItem, Error>, _ completion: @escaping () -> Void) {
         guard let cacheURL = self.cacheUrl else { return }
             
-        self.fileCacheService.load(from: cacheURL.path) { [weak self] actualItems in
+        self.fileCacheService.load(from: cacheURL) { [weak self] actualItems in
             guard let self = self else { return }
             self.items = actualItems
             print("c2:", self.items.count)
@@ -138,6 +144,7 @@ class GeneralService: GeneralServiceProtocol {
             case .success(_):
                 self.isDirty = false
             }
+            completion()
         }
     }
     

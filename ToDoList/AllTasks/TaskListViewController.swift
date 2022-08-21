@@ -134,18 +134,21 @@ final class TaskListViewController: UIViewController {
     }
     
     func updateTableView(_ type: UpdateType) {
-        
+        print(#function)
         //fileCache.loadData()
         
         self.generalService.update {
             let items = self.isDoneShown ? self.generalService.items : self.generalService.items.filter({ $0.isDone == false })
-            
+            print("c3:", items.count, "type:", type)
             switch type {
             case .refresh:
+                print("refreshA")
                 self.taskViewDelegate?.update(with: items, deletingRow: nil, refreshingRow: self.lastIndexPath)
             case .remove:
+                print("remove")
                 self.taskViewDelegate?.update(with: items, deletingRow: self.lastIndexPath, refreshingRow: nil)
             case .refreshAll:
+                print("refreshAll")
                 self.taskViewDelegate?.update(with: items, deletingRow: nil, refreshingRow: nil)
             }
         }
@@ -213,21 +216,30 @@ extension TaskListViewController: TaskListViewAndHeaderOutput, OneTaskViewContro
         
         let revertedItem = generalService.items[row].reverted
         //fileCache.refreshItem(revertedItem, byId: revertedItem.id)
-        generalService.edit(revertedItem)
+        generalService.edit(revertedItem) {
+            self.setHeaderDonesCount()
+            self.refreshTableViewRow()
+        }
         
         //generalService.items.remove(at: row)
         //generalService.items.insert(generalService.items[row].reverted, at: row)
-        
-        setHeaderDonesCount()
-        refreshTableViewRow()
     }
     
     func updateTableViewDeletingRow() {
         updateTableView(.remove)
     }
     
-    func willDismiss() {
-        refreshTableViewRow()
+    func willDismiss(after action: TaskAction) {
+        switch action {
+        case .none:
+            print("super")
+        case .deleting:
+            updateTableViewDeletingRow()
+        case .adding:
+            updateTableView(.refreshAll)
+        case .editing:
+            refreshTableViewRow()
+        }
     }
     
     func presentNewItem() {

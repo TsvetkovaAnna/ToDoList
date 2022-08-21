@@ -11,7 +11,7 @@ import CocoaLumberjack
 final class FileCache {
     
     init() {
-        // loadData()
+         loadData()
     }
     
     private let fileManager = FileManager.default
@@ -68,7 +68,7 @@ final class FileCache {
         
         var parsed: [ToDoItem]?
         
-        parsed = parseCache(fromURL)
+        parsed = parseCache(cacheUrl)
         print("parsed:", parsed)
         if parsed == nil {
             guard let path = jsonPath else { return }
@@ -80,23 +80,15 @@ final class FileCache {
         items = parsedItems
     }
     
-//    func checkData() -> [ToDoItem]? {
-//        guard let path = jsonPath else { return nil }
-//        return parseFromFile(pathForFile: path)
-//    }
-//
-//    var checkTodoItems: [ToDoItem] {
-//        arrayToDoItems
-//    }
-    
     func parseCache(_ fromURL: URL? = nil) -> [ToDoItem]? {
-        
+        print(#function)
         guard let cacheUrl = fromURL ?? cacheUrl else { return nil }
         
         do {
             let cacheData = try Data(contentsOf: cacheUrl)
             return cacheData.parseToItems()
         } catch {
+            print("parseErr")
             DDLogInfo(error)
         }
         
