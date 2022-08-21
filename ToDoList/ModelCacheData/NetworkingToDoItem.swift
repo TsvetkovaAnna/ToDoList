@@ -1,9 +1,29 @@
 import Foundation
 
+struct ListCase: Codable {
+    
+    var list: [Element]
+    var revision: Int32?
+    
+    init(_ list: [Element]) {
+        self.list = list
+    }
+}
+
+struct ElementCase: Codable {
+    
+    var element: Element
+    var revision: Int32?
+    
+    init(_ element: Element) {
+        self.element = element
+    }
+}
+
 struct Element: Codable {
     let id: String
     let text: String
-    let deadline: Int?
+    let deadline: Int64?
     let importance: String
     let done: Bool
     let color: String?
@@ -21,7 +41,11 @@ struct Element: Codable {
     init(id: String, text: String, deadline: Int?, importance: String, done: Bool, color: String?, createdAt: Int, changedAt: Int, lastUpdatedBy: String) {
         self.id = id
         self.text = text
-        self.deadline = deadline
+        if let deadlineValue = deadline {
+            self.deadline = Int64(deadlineValue)
+        } else {
+            self.deadline = nil
+        }
         self.importance = importance
         self.done = done
         self.color = color
@@ -47,18 +71,31 @@ struct Element: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         text = try container.decode(String.self, forKey: .text)
-        deadline = try container.decode(Int.self, forKey: .deadline)
+        deadline = try? container.decode(Int64.self, forKey: .deadline)
         importance = try container.decode(String.self, forKey: .importance)
         done = try container.decode(Bool.self, forKey: .done)
-        color = try container.decode(String.self, forKey: .color)
+        color = try? container.decode(String.self, forKey: .color)
         createdAt = try container.decode(Int.self, forKey: .createdAt)
         changedAt = try container.decode(Int.self, forKey: .changedAt)
         lastUpdatedBy = try container.decode(String.self, forKey: .lastUpdatedBy)
     }
 }
 
-struct Welcome: Codable {
-    let list: [Element]
-    let revision: Int?
-    let status: String? //наверно не нужен
+//struct TodoResponse: Codable {
+//    let list: [Element]
+//    let revision: Int?
+//    let status: String? //наверно не нужен
+//}
+
+extension Element {
+    var likeItem: ToDoItem {
+        
+        var deadlineValue: Date?
+        
+        if let deadline = deadline {
+            deadlineValue = Date(timeIntervalSince1970: Double(deadline))
+        }
+        
+        return ToDoItem(id: id, text: text, importance: ToDoItem.Importance(rawValue: importance) ?? .basic, deadline: deadlineValue, isDone: done, dateCreated: Date(timeIntervalSince1970: Double(createdAt)), dateChanged: Date(timeIntervalSince1970: Double(changedAt)))
+    }
 }

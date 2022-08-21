@@ -86,7 +86,14 @@ extension ToDoItem {
     }
     
     var likeElement: Element {
-        Element(id: id, text: text, deadline: Int(deadline?.timeIntervalSince1970 ?? 0), importance: importance.rawValue, done: isDone, color: "white", createdAt: Int(dateCreated.timeIntervalSince1970), changedAt: Int(dateChanged?.timeIntervalSince1970 ?? 0), lastUpdatedBy: UIDevice.current.identifierForVendor!.uuidString)
+        
+        var deadlineValue: Int?
+        
+        if let deadline = deadline {
+            deadlineValue = Int(deadline.timeIntervalSince1970)
+        }
+        
+        return Element(id: id, text: text, deadline: deadlineValue, importance: importance.rawValue, done: isDone, color: nil, createdAt: Int(dateCreated.timeIntervalSince1970), changedAt: Int(dateChanged?.timeIntervalSince1970 ?? Date().timeIntervalSince1970), lastUpdatedBy: UIDevice.current.identifierForVendor!.uuidString)
     }
 }
 

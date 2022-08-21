@@ -12,12 +12,7 @@ enum Request {
     case get, post
 }
 
-enum NetworkError: Error {
-    case noConnection
-    case badParsing
-}
-
-class DefaultNetworkingService: NetworkService {
+class DefaultNetworkingService/*: NetworkService*/ {
     
     let baseURL = URL(string: "https://beta.mrdekk.ru/todobackend")
     let urlSession: URLSession

@@ -21,7 +21,7 @@ final class OneTaskViewController: UIViewController {
 
     private var toDo: ToDoItem?
     
-    private var cache = FileCache()
+    private var generalService: GeneralServiceProtocol
     
     //private var lastItemId: String? = nil
     
@@ -252,8 +252,9 @@ final class OneTaskViewController: UIViewController {
         return calendar
     }()
     
-    init(toDoItem: ToDoItem?) {
+    init(toDoItem: ToDoItem?, generalService: GeneralServiceProtocol) {
         self.toDo = toDoItem
+        self.generalService = generalService
         //self.textView.text = toDoItem.text
         super.init(nibName: nil, bundle: nil)
     }
@@ -455,9 +456,11 @@ final class OneTaskViewController: UIViewController {
         guard let currentToDo = currentToDo else { return }
         
         if let toDo = toDo {
-            cache.refreshItem(currentToDo, byId: toDo.id)
+            //cache.refreshItem(currentToDo, byId: toDo.id)
+            generalService.edit(currentToDo)
         } else {
-            cache.addItem(item: currentToDo)
+            //cache.addItem(item: currentToDo)
+            generalService.add(currentToDo)
         }
         
         close()
@@ -466,9 +469,11 @@ final class OneTaskViewController: UIViewController {
     @objc private func didTapDeleteButton() {
         
         guard let id = toDo?.id else { return }
-        cache.deleteItem(byId: id)
-        delegate?.updateTableViewDeletingRow()
-        close()
+        //cache.deleteItem(byId: id)
+        generalService.delete(id) {
+            self.delegate?.updateTableViewDeletingRow()
+            self.close()
+        }
     }
     
     @objc private func setDeadlineDate(_: AnyObject/*calend: UIDatePicker*/) {

@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        let fileCache = FileCache()
 //        let taskListViewController = TaskListViewController(fileCache: fileCache)
         
-        let generalService = GeneralService(with: DefaultNetworkingService(), fileCacheService: MockFileCacheService())
+        let generalService = GeneralService(with: APINetworkingService(), fileCacheService: MockFileCacheService())
         let taskListViewController = TaskListViewController(generalService: generalService)
         
         //let tasksNavigationController = UINavigationController(rootViewController: taskListViewController)

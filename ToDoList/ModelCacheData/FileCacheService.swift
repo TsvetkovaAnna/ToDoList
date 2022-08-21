@@ -8,7 +8,9 @@
 import Foundation
 
 protocol FileCacheService {
-        
+
+    var fileCache: FileCache { get set }
+    
     func save(
         to file: String,
         completion: @escaping ([ToDoItem]) -> Void

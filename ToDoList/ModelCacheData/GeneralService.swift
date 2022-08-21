@@ -19,31 +19,31 @@ class GeneralService: GeneralServiceProtocol {
     }
     
     var items = [ToDoItem]()
+    var isDirty = true
     
     init(with networkService: NetworkService, fileCacheService: FileCacheService) {
         self.networkService = networkService
         self.fileCacheService = fileCacheService
-        
+    }
+    
+    func load(completion: @escaping () -> Void) {
         guard let cacheURL = self.cacheUrl else { return }
             
         self.fileCacheService.load(from: cacheURL.path) { [weak self] cacheItems in
             guard let self = self else { return }
             self.items = cacheItems
+            completion()
         }
     }
     
     func edit(_ item: ToDoItem) {
+        print(#function)
         perfomInOtherThread {
             self.update {
-                guard let cacheURL = self.cacheUrl else { return }
-                
-                self.networkService.editTodoItem(item) { _ in
+                self.networkService.editTodoItem(item) { result in
                     self.perfomInMainThread {
                         self.fileCacheService.edit(item)
-                        self.fileCacheService.save(to: cacheURL.path) { [weak self] actualItems in
-                            guard let self = self else { return }
-                            self.items = actualItems
-                        }
+                        self.saveChangeToFileCache(result)
                     }
                 }
             }
@@ -51,72 +51,92 @@ class GeneralService: GeneralServiceProtocol {
     }
     
     func add(_ newItem: ToDoItem) {
+        print(#function)
         perfomInOtherThread {
             self.update {
-                guard let cacheURL = self.cacheUrl else { return }
-                
-                self.networkService.addTodoItem(newItem) { _ in
+                self.networkService.addTodoItem(newItem) { result in
                     self.perfomInMainThread {
                         self.fileCacheService.add(newItem)
-                        self.fileCacheService.save(to: cacheURL.path) { [weak self] actualItems in
-                            guard let self = self else { return }
-                            self.items = actualItems
-                        }
+                        self.saveChangeToFileCache(result)
                     }
                 }
             }
         }
     }
     
-    func delete(_ at: String) {
+    func delete(_ at: String, _ completion: @escaping () -> Void) {
+        print(#function)
         perfomInOtherThread {
             self.update {
-                guard let cacheURL = self.cacheUrl else { return }
-                
-                self.networkService.deleteTodoItem(at: at) { _ in
+                self.networkService.deleteTodoItem(at: at) { result in
                     self.perfomInMainThread {
                         self.fileCacheService.delete(id: at)
-                        self.fileCacheService.save(to: cacheURL.path) { [weak self] actualItems in
-                            guard let self = self else { return }
-                            self.items = actualItems
-                        }
+                        print("c:", self.fileCacheService.fileCache.items.count)
+//                        self.fileCacheService.save(to: self.cacheUrl!.path) { _ in
+                            self.saveChangeToFileCache(result)
+                            completion()
+//                        }
                     }
                 }
             }
         }
     }
     
-    func update(_ completion: @escaping () -> Void) { // ?laod
-        perfomInOtherThread {
-            guard let cacheURL = self.cacheUrl else { return }
+    func update(_ completion: @escaping () -> Void) {
+        print(#function)
+        
+        func saveFreshItems(_ freshItems: [ToDoItem]) {
+            self.items = freshItems
+            self.fileCacheService.fileCache.items = self.items
+        }
+        
+        func saveActualItemsIfAvailable(from result: Result<[ToDoItem], Error>)  {
+            switch result {
+            case .failure(let error):
+                DDLogInfo(error)
+            case .success(let freshItems):
+                self.isDirty = false
+                saveFreshItems(freshItems)
+            }
             
-            self.networkService.getAllTodoItems { [weak self] result in
-                
-                guard let self = self else { return }
-                
-                switch result {
-                case .success(let networkItems):
-                    
-                    if self.items.isEmpty {
-                        self.perfomInMainThread {
-                            networkItems.forEach { item in
-                                self.fileCacheService.add(item)
-                            }
-                            self.fileCacheService.save(to: cacheURL.path) { actualItems in
-                                self.items = actualItems
-                                completion()
-                            }
-                        }
+            self.perfomInMainThread {
+                completion()
+            }
+        }
+        
+        func syncItems() {
+            networkService.saveAllTodoItems(items) { result in
+                saveActualItemsIfAvailable(from: result)
+            }
+        }
+        
+        perfomInOtherThread {
+            if self.networkService.revision != nil {
+                syncItems()
+            } else {
+                self.networkService.getAllTodoItems { result in
+                    if self.fileCacheService.fileCache.items.isEmpty {
+                        saveActualItemsIfAvailable(from: result)
                     } else {
-                        self.networkService.saveAllTodoItems(self.items) { _ in
-                            completion()
-                        }
+                        syncItems()
                     }
-                    
-                case .failure(let error):
-                    DDLogInfo(error)
                 }
-                
+            }
+        }
+    }
+    
+    func saveChangeToFileCache(_ result: Result<ToDoItem, Error>) {
+        guard let cacheURL = self.cacheUrl else { return }
+            
+        self.fileCacheService.load(from: cacheURL.path) { [weak self] actualItems in
+            guard let self = self else { return }
+            self.items = actualItems
+            print("c2:", self.items.count)
+            switch result {
+            case .failure(_):
+                self.isDirty = true
+            case .success(_):
+                self.isDirty = false
             }
         }
     }

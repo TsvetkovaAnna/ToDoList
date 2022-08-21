@@ -11,7 +11,7 @@ import CocoaLumberjack
 final class FileCache {
     
     init() {
-        loadData()
+        // loadData()
     }
     
     private let fileManager = FileManager.default
@@ -25,7 +25,7 @@ final class FileCache {
         return url.appendingPathComponent("ToDoItems.txt")
     }
     
-    private(set) var items = [ToDoItem]() {
+    var items = [ToDoItem]() {
         didSet {
             saveData()
         }
@@ -54,7 +54,7 @@ final class FileCache {
               !items.isEmpty,
               let jsonData = ToDoItemList.json(fromItems: items)
         else { return }
-        
+        print("dd:", String(data: jsonData, encoding: .utf8))
         fileManager.createFile(atPath: cacheUrl.path, contents: jsonData)
     }
     
@@ -69,7 +69,7 @@ final class FileCache {
         var parsed: [ToDoItem]?
         
         parsed = parseCache(fromURL)
-        
+        print("parsed:", parsed)
         if parsed == nil {
             guard let path = jsonPath else { return }
             parsed = parseFromFile(pathForFile: path)

@@ -2,7 +2,7 @@ import Foundation
 
 class MockFileCacheService: FileCacheService {
     
-    let fileCache = FileCache()
+    var fileCache = FileCache()
     
     func save(to file: String, completion: @escaping ([ToDoItem]) -> Void) {
         fileCache.saveData(URL(string: file))

@@ -7,7 +7,54 @@
 
 import Foundation
 
-class DefaultNetworkingService2 {
+/*
+ 
+ /*
+  1. first time -> getAll for revision, isDirty to false
+  2. fileCache.items -> patch -> items & fileCache.items, isDirty to false
+  
+  3. editing -> save to fileCache, items? — isDirty
+  4. if isDirty -> patch
+  */
+ 
+ perfomInOtherThread {
+     guard let cacheURL = self.cacheUrl else { return }
+     
+     self.networkService.getAllTodoItems { [weak self] result in
+         
+         guard let self = self else { return }
+         
+         switch result {
+         case .success(let networkItems):
+             
+             if self.items.isEmpty {
+                 self.perfomInMainThread {
+                     networkItems.forEach { item in
+                         self.fileCacheService.add(item)
+                     }
+                     self.fileCacheService.save(to: cacheURL.path) { actualItems in
+                         self.items = actualItems
+                         self.perfomInMainThread {
+                             completion()
+                         }
+                     }
+                 }
+             } else {
+                 self.networkService.saveAllTodoItems(self.items) { _ in
+                     self.perfomInMainThread {
+                         completion()
+                     }
+                 }
+             }
+             
+         case .failure(let error):
+             DDLogInfo(error)
+         }
+         
+     }
+ }
+ 
+ class DefaultNetworkingService2 {
     
     private let fileCasheServise = MockFileCacheService2()
     
@@ -23,14 +70,14 @@ class DefaultNetworkingService2 {
         }
     }
     
-    func editTodoItem(_ item: ToDoItem, completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
+    func editTodoItem(_ item: ToDoItem, completion: @escaping (Result<ToDoItem, Error>) -> Void) {
         fileCasheServise.add(item)
         getAllTodoItems { result in
             completion(result)
         }
     }
     
-    func deleteTodoItem(at id: String, completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
+    func deleteTodoItem(at id: String, completion: @escaping (Result<ToDoItem, Error>) -> Void) {
         fileCasheServise.delete(id: id)
         getAllTodoItems { result in
             completion(result)
@@ -83,3 +130,4 @@ class MockFileCacheService2 {
         }
     }
 }
+*/

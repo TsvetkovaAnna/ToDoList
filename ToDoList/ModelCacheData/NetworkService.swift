@@ -9,6 +9,8 @@ import Foundation
 
 protocol NetworkService {
     
+    var revision: String? { get set }
+    
     func getTodoItem(
         _ id: String,
         completion: @escaping (Result<[ToDoItem], Error>) -> Void
@@ -25,16 +27,16 @@ protocol NetworkService {
     
     func addTodoItem(
         _ item: ToDoItem,
-        completion: @escaping (Result<[ToDoItem], Error>) -> Void
+        completion: @escaping (Result<ToDoItem, Error>) -> Void
     )
     
     func editTodoItem(
         _ item: ToDoItem,
-        completion: @escaping (Result<[ToDoItem], Error>) -> Void
+        completion: @escaping (Result<ToDoItem, Error>) -> Void
     )
     
     func deleteTodoItem(
         at id: String,
-        completion: @escaping (Result<[ToDoItem], Error>) -> Void
+        completion: @escaping (Result<ToDoItem, Error>) -> Void
     )
 }
