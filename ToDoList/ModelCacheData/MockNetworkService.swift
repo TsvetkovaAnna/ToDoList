@@ -1,5 +1,5 @@
 //
-//  MockNetworkService.swift
+//  DefaultNetworkingService.swift
 //  ToDoList
 //
 //  Created by Anna Tsvetkova on 12.08.2022.
@@ -12,14 +12,23 @@ enum Request {
     case get, post
 }
 
-enum NetworkError: Error {
-    case noConnection
-    case badParsing
-}
-
-class MockNetworkService: NetworkService {
+class DefaultNetworkingService/*: NetworkService*/ {
     
-    let baseURL = URL(string: "https://google.com/request/")
+    let baseURL = URL(string: "https://beta.mrdekk.ru/todobackend")
+    let urlSession: URLSession
+    
+    init() {
+        self.urlSession = URLSession(configuration: .default)
+    }
+    
+    func getTodoItem(_ id: String, completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
+        
+        guard let url = baseURL?.appendingPathComponent("get") else { return }
+        
+        request(.get, url: url) { result in
+            completion(result)
+        }
+    }
     
     func getAllTodoItems(completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
         

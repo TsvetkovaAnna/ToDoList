@@ -1,8 +1,15 @@
 import UIKit
 import CocoaLumberjack
 
+enum TaskAction {
+    case none
+    case adding
+    case deleting
+    case editing
+}
+
 protocol OneTaskViewControllerDelegate: AnyObject {
-    func willDismiss()
+    func willDismiss(after: TaskAction)
     func updateTableViewDeletingRow()
 }
 
@@ -21,7 +28,7 @@ final class OneTaskViewController: UIViewController {
 
     private var toDo: ToDoItem?
     
-    private var cache = FileCache()
+    private var generalService: GeneralServiceProtocol
     
     //private var lastItemId: String? = nil
     
@@ -252,8 +259,9 @@ final class OneTaskViewController: UIViewController {
         return calendar
     }()
     
-    init(toDoItem: ToDoItem?) {
+    init(toDoItem: ToDoItem?, generalService: GeneralServiceProtocol) {
         self.toDo = toDoItem
+        self.generalService = generalService
         //self.textView.text = toDoItem.text
         super.init(nibName: nil, bundle: nil)
     }
@@ -439,6 +447,7 @@ final class OneTaskViewController: UIViewController {
 //        } else {
 //            DDLogInfo("nav controller is nil")
 //        }
+        delegate?.willDismiss(after: .none)
         dismiss(animated: true, completion: nil)
     }
     
@@ -446,7 +455,7 @@ final class OneTaskViewController: UIViewController {
         //returnToTaskList()
         //navigationController?.popViewController(animated: true)
         
-        delegate?.willDismiss()
+        //delegate?.willDismiss(after: action)
         dismiss(animated: true)
     }
     
@@ -454,21 +463,31 @@ final class OneTaskViewController: UIViewController {
         
         guard let currentToDo = currentToDo else { return }
         
-        if let toDo = toDo {
-            cache.refreshItem(currentToDo, byId: toDo.id)
+        if let todo = toDo {
+            //cache.refreshItem(currentToDo, byId: toDo.id)
+            let item = ToDoItem(id: todo.id, text: currentToDo.text, importance: currentToDo.importance, deadline: currentToDo.deadline, isDone: todo.isDone, dateCreated: todo.dateCreated, dateChanged: currentToDo.dateChanged)
+            generalService.edit(item) {
+                self.delegate?.willDismiss(after: .editing)
+                self.close()
+            }
         } else {
-            cache.addItem(item: currentToDo)
+            //cache.addItem(item: currentToDo)
+            generalService.add(currentToDo) {
+                self.delegate?.willDismiss(after: .adding)
+                self.close()
+            }
         }
-        
-        close()
     }
     
     @objc private func didTapDeleteButton() {
         
         guard let id = toDo?.id else { return }
-        cache.deleteItem(byId: id)
-        delegate?.updateTableViewDeletingRow()
-        close()
+        //cache.deleteItem(byId: id)
+        generalService.delete(id) {
+            self.delegate?.updateTableViewDeletingRow()
+            //self.delegate?.willDismiss(after: .deleting)
+            self.close()
+        }
     }
     
     @objc private func setDeadlineDate(_: AnyObject/*calend: UIDatePicker*/) {

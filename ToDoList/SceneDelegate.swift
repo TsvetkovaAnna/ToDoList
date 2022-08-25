@@ -15,8 +15,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
-        let fileCache = FileCache()
-        let taskListViewController = TaskListViewController(fileCache: fileCache)
+        
+//        let fileCache = FileCache()
+//        let taskListViewController = TaskListViewController(fileCache: fileCache)
+        
+        let generalService = GeneralService(with: APINetworkingService(), fileCacheService: MockFileCacheService())
+        let taskListViewController = TaskListViewController(generalService: generalService)
+        
         //let tasksNavigationController = UINavigationController(rootViewController: taskListViewController)
         let transitionNavigationController = TransitionNavigationController(rootViewController: taskListViewController)
         //let oneTaskNavigationController = UINavigationController(rootViewController: OneTaskViewController())

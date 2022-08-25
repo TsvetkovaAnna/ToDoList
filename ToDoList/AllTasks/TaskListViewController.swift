@@ -16,7 +16,9 @@ protocol TaskListViewOutput: AnyObject {
 
 final class TaskListViewController: UIViewController {
 
-    let fileCache: FileCache
+    //let fileCache: FileCache
+    let generalService: GeneralService
+    
     weak var taskViewDelegate: TaskListViewInput?
     weak var headerDelegate: HeaderInput?
     
@@ -27,12 +29,19 @@ final class TaskListViewController: UIViewController {
 //        UIApplication().delegate as? AppDelegate
 //    }
     
+    let activityIndicator = UIActivityIndicatorView.init(style: .medium)
+//    let refreshBarButton: UIBarButtonItem = UIBarButtonItem(customView: activityIndicator)
+//    self.navigationItem.leftBarButtonItem = refreshBarButton
+//    activityIndicator.startAnimating()
+    
     private lazy var viewTable: TaskListView = {
         
-        let view = TaskListView(frame: .zero, todoItems: fileCache.items, deleteAction: { indexPath in
-            let item = self.fileCache.items[indexPath.row]
-            self.fileCache.deleteItem(byId: item.id)
-            self.taskViewDelegate?.update(with: self.fileCache.items, deletingRow: indexPath, refreshingRow: nil)
+        let view = TaskListView(frame: .zero, todoItems: generalService.items, deleteAction: { indexPath in
+            let item = self.generalService.items[indexPath.row]
+            //self.fileCache.deleteItem(byId: item.id)
+            self.generalService.delete(item.id) {
+                self.taskViewDelegate?.update(with: self.generalService.items, deletingRow: indexPath, refreshingRow: nil)
+            }
         }, completionWithHeader: { headerView in
             headerView.delegate = self
             self.headerDelegate = headerView
@@ -46,8 +55,13 @@ final class TaskListViewController: UIViewController {
         return view
     }()
     
-    init(fileCache: FileCache) {
-        self.fileCache = fileCache
+//    init(fileCache: FileCache) {
+//        self.fileCache = fileCache
+//        super.init(nibName: nil, bundle: nil)
+//    }
+    
+    init(generalService: GeneralService) {
+        self.generalService = generalService
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -58,7 +72,28 @@ final class TaskListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.activityIndicator.hidesWhenStopped = true
+
+        showIndicator()
+        
+        //hideIndicator()
+        
         setupView()
+        
+//        let testItem = ToDoItem(id: "123", text: "t", importance: .low, deadline: nil, isDone: false, dateCreated: Date(), dateChanged: Date())
+//        let testItem2 = ToDoItem(id: "1", text: "newText!!!", importance: .low, deadline: Date(), isDone: false, dateCreated: Date(), dateChanged: Date(timeIntervalSinceNow: 5))
+//
+//        generalService.add(testItem)
+//
+//
+////        testItem.dateChanged = Date()
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 7) {
+////            self.generalService.edit(testItem2)
+//            self.generalService.update {
+//                print("upd")
+//            }
+//        }
+//        generalService.delete("Check this design")
 
 //        guard let appDelegate = appDelegate else { return }
 //        appDelegate.application?(<#T##application: UIApplication##UIApplication#>, supportedInterfaceOrientationsFor: <#T##UIWindow?#>)
@@ -68,6 +103,10 @@ final class TaskListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.prefersLargeTitles = true
+        
+//        let refreshBarButton: UIBarButtonItem = UIBarButtonItem(customView: activityIndicator)
+//        self.navigationItem.rightBarButtonItem = refreshBarButton
+//        activityIndicator.startAnimating()
         // updateTableView()
     }
     
@@ -76,23 +115,42 @@ final class TaskListViewController: UIViewController {
         self.navigationController?.navigationBar.prefersLargeTitles = false
     }
     
+    func showIndicator() {
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: activityIndicator)
+        //self.navigationItem.titleView = self.activityIndicator
+        self.activityIndicator.startAnimating()
+        self.activityIndicator.isHidden = false
+    }
+
+    func hideIndicator() {
+        //self.navigationItem.titleView = nil
+        //self.navigationItem.leftBarButtonItem = nil
+        self.activityIndicator.stopAnimating()
+        self.activityIndicator.isHidden = true
+    }
+    
     func refreshTableViewRow() {
         updateTableView(.refresh)
     }
     
     func updateTableView(_ type: UpdateType) {
+        print(#function)
+        //fileCache.loadData()
         
-        fileCache.loadData()
-        
-        let items = isDoneShown ? fileCache.items : fileCache.items.filter({ $0.isDone == false })
-        
-        switch type {
-        case .refresh:
-            taskViewDelegate?.update(with: items, deletingRow: nil, refreshingRow: lastIndexPath)
-        case .remove:
-            taskViewDelegate?.update(with: items, deletingRow: lastIndexPath, refreshingRow: nil)
-        case .refreshAll:
-            taskViewDelegate?.update(with: items, deletingRow: nil, refreshingRow: nil)
+        self.generalService.update {
+            let items = self.isDoneShown ? self.generalService.items : self.generalService.items.filter({ $0.isDone == false })
+            print("c3:", items.count, "type:", type)
+            switch type {
+            case .refresh:
+                print("refreshA")
+                self.taskViewDelegate?.update(with: items, deletingRow: nil, refreshingRow: self.lastIndexPath)
+            case .remove:
+                print("remove")
+                self.taskViewDelegate?.update(with: items, deletingRow: self.lastIndexPath, refreshingRow: nil)
+            case .refreshAll:
+                print("refreshAll")
+                self.taskViewDelegate?.update(with: items, deletingRow: nil, refreshingRow: nil)
+            }
         }
         
     }
@@ -104,18 +162,20 @@ final class TaskListViewController: UIViewController {
         //navigationItem.titleView?.backgroundColor?.withAlphaComponent(0.8)
         view.backgroundColor = .init(_colorLiteralRed: 0.97, green: 0.97, blue: 0.95, alpha: 1.0)
         
-        view.addSubview(viewTable)
-        let tableTop = viewTable.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
-        let tableBottom = viewTable.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
-        let tableLeading = viewTable.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
-        let tableTrailing = viewTable.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
-        viewTable.backgroundColor = .clear
-        
-        NSLayoutConstraint.activate([tableTop, tableBottom, tableLeading, tableTrailing])
+        generalService.load {
+            self.view.addSubview(self.viewTable)
+            let tableTop = self.viewTable.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor)
+            let tableBottom = self.viewTable.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor)
+            let tableLeading = self.viewTable.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor)
+            let tableTrailing = self.viewTable.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor)
+            self.viewTable.backgroundColor = .clear
+            
+            NSLayoutConstraint.activate([tableTop, tableBottom, tableLeading, tableTrailing])
+        }
     }
     
     func setHeaderDonesCount() {
-        let donesCount = fileCache.items.filter { $0.isDone == true }.count
+        let donesCount = generalService.items.filter { $0.isDone == true }.count
         headerDelegate?.setDonesCount(donesCount)
     }
 
@@ -154,22 +214,32 @@ extension TaskListViewController: TaskListViewAndHeaderOutput, OneTaskViewContro
     func changeIsDone(_ indexPath: IndexPath?) {
         guard let row = indexPath?.row else { return }
         
-        let revertedItem = fileCache.items[row].reverted
-        fileCache.refreshItem(revertedItem, byId: revertedItem.id)
+        let revertedItem = generalService.items[row].reverted
+        //fileCache.refreshItem(revertedItem, byId: revertedItem.id)
+        generalService.edit(revertedItem) {
+            self.setHeaderDonesCount()
+            self.refreshTableViewRow()
+        }
         
-        //fileCache.items.remove(at: row)
-        //fileCache.items.insert(fileCache.items[row].reverted, at: row)
-        
-        setHeaderDonesCount()
-        refreshTableViewRow()
+        //generalService.items.remove(at: row)
+        //generalService.items.insert(generalService.items[row].reverted, at: row)
     }
     
     func updateTableViewDeletingRow() {
         updateTableView(.remove)
     }
     
-    func willDismiss() {
-        refreshTableViewRow()
+    func willDismiss(after action: TaskAction) {
+        switch action {
+        case .none:
+            print("super")
+        case .deleting:
+            updateTableViewDeletingRow()
+        case .adding:
+            updateTableView(.refreshAll)
+        case .editing:
+            refreshTableViewRow()
+        }
     }
     
     func presentNewItem() {
@@ -183,7 +253,7 @@ extension TaskListViewController: TaskListViewAndHeaderOutput, OneTaskViewContro
     }
     
     func openTask(_ item: ToDoItem?) {
-        let oneTaskController = OneTaskViewController(toDoItem: item)
+        let oneTaskController = OneTaskViewController(toDoItem: item, generalService: generalService)
         oneTaskController.delegate = self
         
 //        guard let transitioningDelegate = navigationController as? TransitionNavigationController else { return }

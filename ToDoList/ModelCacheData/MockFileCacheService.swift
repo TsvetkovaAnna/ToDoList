@@ -2,7 +2,7 @@ import Foundation
 
 class MockFileCacheService: FileCacheService {
     
-    let fileCache = FileCache()
+    var fileCache = FileCache()
     
     func save(to file: String, completion: @escaping ([ToDoItem]) -> Void) {
         fileCache.saveData(URL(string: file))
@@ -10,8 +10,8 @@ class MockFileCacheService: FileCacheService {
         completion(fileCache.items)
     }
     
-    func load(from file: String, completion: @escaping ([ToDoItem]) -> Void) {
-        fileCache.loadData(URL(string: file))
+    func load(from url: URL, completion: @escaping ([ToDoItem]) -> Void) {
+        fileCache.loadData(url)
         completion(fileCache.items)
     }
     

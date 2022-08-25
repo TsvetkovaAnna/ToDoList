@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         DDLog.add(fileLogger)
         DDLogInfo(fileLogger.logFileManager.sortedLogFilePaths)
         
-        // let generalService = GeneralService(with: MockNetworkService(), fileCacheService: MockFileCacheService())
+        // let generalService = GeneralService(with: DefaultNetworkingService(), fileCacheService: MockFileCacheService())
         // generalService.update()
         
         return true

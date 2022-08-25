@@ -34,10 +34,13 @@
 		9585859028A68CB400DFEEC4 /* FileCacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9585858F28A68CB400DFEEC4 /* FileCacheService.swift */; };
 		9585859228A68FD200DFEEC4 /* MockFileCacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9585859128A68FD200DFEEC4 /* MockFileCacheService.swift */; };
 		9585859428A6969200DFEEC4 /* MockNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9585859328A6969200DFEEC4 /* MockNetworkService.swift */; };
-		9585859628A7DB5000DFEEC4 /* GeneralMockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9585859528A7DB5000DFEEC4 /* GeneralMockService.swift */; };
+		9585859628A7DB5000DFEEC4 /* GeneralService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9585859528A7DB5000DFEEC4 /* GeneralService.swift */; };
+		95CD5CB428B0426200C1E2A1 /* GeneralServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CD5CB328B0426200C1E2A1 /* GeneralServiceProtocol.swift */; };
+		95CD5CB628B0454400C1E2A1 /* NetworkingToDoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CD5CB528B0454400C1E2A1 /* NetworkingToDoItem.swift */; };
+		95CD5CB828B14CAF00C1E2A1 /* APINetworkingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CD5CB728B14CAF00C1E2A1 /* APINetworkingService.swift */; };
+		95CD5CBA28B1985D00C1E2A1 /* NetworkingError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CD5CB928B1985D00C1E2A1 /* NetworkingError.swift */; };
 		95D84CA22896F1840001AE51 /* MathFunc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D84CA12896F1840001AE51 /* MathFunc.swift */; };
 		95D84CA42897243B0001AE51 /* IndentTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D84CA32897243B0001AE51 /* IndentTextField.swift */; };
-		95F5BCA728AE8AEE00E31DEB /* NetworkingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F5BCA628AE8AEE00E31DEB /* NetworkingService.swift */; };
 		95F621F328A945ED0006FE63 /* MockTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F621F228A945ED0006FE63 /* MockTest.swift */; };
 		95F621F528A9527D0006FE63 /* MockServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F621F428A9527D0006FE63 /* MockServer.swift */; };
 		95F621F728A959230006FE63 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F621F628A959230006FE63 /* Data+Extensions.swift */; };
@@ -98,10 +101,13 @@
 		9585858F28A68CB400DFEEC4 /* FileCacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCacheService.swift; sourceTree = "<group>"; };
 		9585859128A68FD200DFEEC4 /* MockFileCacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFileCacheService.swift; sourceTree = "<group>"; };
 		9585859328A6969200DFEEC4 /* MockNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNetworkService.swift; sourceTree = "<group>"; };
-		9585859528A7DB5000DFEEC4 /* GeneralMockService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralMockService.swift; sourceTree = "<group>"; };
+		9585859528A7DB5000DFEEC4 /* GeneralService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralService.swift; sourceTree = "<group>"; };
+		95CD5CB328B0426200C1E2A1 /* GeneralServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralServiceProtocol.swift; sourceTree = "<group>"; };
+		95CD5CB528B0454400C1E2A1 /* NetworkingToDoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingToDoItem.swift; sourceTree = "<group>"; };
+		95CD5CB728B14CAF00C1E2A1 /* APINetworkingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APINetworkingService.swift; sourceTree = "<group>"; };
+		95CD5CB928B1985D00C1E2A1 /* NetworkingError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingError.swift; sourceTree = "<group>"; };
 		95D84CA12896F1840001AE51 /* MathFunc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathFunc.swift; sourceTree = "<group>"; };
 		95D84CA32897243B0001AE51 /* IndentTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndentTextField.swift; sourceTree = "<group>"; };
-		95F5BCA628AE8AEE00E31DEB /* NetworkingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingService.swift; sourceTree = "<group>"; };
 		95F621F228A945ED0006FE63 /* MockTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTest.swift; sourceTree = "<group>"; };
 		95F621F428A9527D0006FE63 /* MockServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServer.swift; sourceTree = "<group>"; };
 		95F621F628A959230006FE63 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
@@ -242,14 +248,17 @@
 				9585858D28A68B9600DFEEC4 /* NetworkService.swift */,
 				9585858F28A68CB400DFEEC4 /* FileCacheService.swift */,
 				9585859328A6969200DFEEC4 /* MockNetworkService.swift */,
+				95CD5CB728B14CAF00C1E2A1 /* APINetworkingService.swift */,
 				95F621F428A9527D0006FE63 /* MockServer.swift */,
 				9585859128A68FD200DFEEC4 /* MockFileCacheService.swift */,
-				9585859528A7DB5000DFEEC4 /* GeneralMockService.swift */,
+				9585859528A7DB5000DFEEC4 /* GeneralService.swift */,
+				95CD5CB328B0426200C1E2A1 /* GeneralServiceProtocol.swift */,
 				95F621F228A945ED0006FE63 /* MockTest.swift */,
 				95563EC528A0626200ADA9E7 /* FileCache.swift */,
 				951D37D32894608800DA3BEC /* ToDoItem.swift */,
+				95CD5CB528B0454400C1E2A1 /* NetworkingToDoItem.swift */,
+				95CD5CB928B1985D00C1E2A1 /* NetworkingError.swift */,
 				95F621F628A959230006FE63 /* Data+Extensions.swift */,
-				95F5BCA628AE8AEE00E31DEB /* NetworkingService.swift */,
 			);
 			path = ModelCacheData;
 			sourceTree = "<group>";
@@ -531,7 +540,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9585859628A7DB5000DFEEC4 /* GeneralMockService.swift in Sources */,
+				9585859628A7DB5000DFEEC4 /* GeneralService.swift in Sources */,
 				95563ECA28A062C100ADA9E7 /* DateExtension.swift in Sources */,
 				9585858C28A55C7E00DFEEC4 /* Constants.swift in Sources */,
 				95563EC228A0622300ADA9E7 /* TaskTableViewCell.swift in Sources */,
@@ -539,14 +548,16 @@
 				9585858E28A68B9600DFEEC4 /* NetworkService.swift in Sources */,
 				9585859228A68FD200DFEEC4 /* MockFileCacheService.swift in Sources */,
 				9585859028A68CB400DFEEC4 /* FileCacheService.swift in Sources */,
+				95CD5CB828B14CAF00C1E2A1 /* APINetworkingService.swift in Sources */,
+				95CD5CBA28B1985D00C1E2A1 /* NetworkingError.swift in Sources */,
 				95D84CA22896F1840001AE51 /* MathFunc.swift in Sources */,
 				95F621F728A959230006FE63 /* Data+Extensions.swift in Sources */,
 				95563EC428A0623E00ADA9E7 /* NewTableViewCell.swift in Sources */,
-				95F5BCA728AE8AEE00E31DEB /* NetworkingService.swift in Sources */,
 				951D37D42894608800DA3BEC /* ToDoItem.swift in Sources */,
 				95563EBC28A061A500ADA9E7 /* TransitionNavigationController.swift in Sources */,
 				95D84CA42897243B0001AE51 /* IndentTextField.swift in Sources */,
 				95F621F528A9527D0006FE63 /* MockServer.swift in Sources */,
+				95CD5CB628B0454400C1E2A1 /* NetworkingToDoItem.swift in Sources */,
 				95563EBA28A0616300ADA9E7 /* TaskListViewController.swift in Sources */,
 				95563EBE28A061D100ADA9E7 /* CellExpandingAnimator.swift in Sources */,
 				951D37A42894545800DA3BEC /* AppDelegate.swift in Sources */,
@@ -556,6 +567,7 @@
 				95563EB828A0613700ADA9E7 /* PlaceholderTextView.swift in Sources */,
 				95563EC628A0626200ADA9E7 /* FileCache.swift in Sources */,
 				95563EC028A061F000ADA9E7 /* TaskListView.swift in Sources */,
+				95CD5CB428B0426200C1E2A1 /* GeneralServiceProtocol.swift in Sources */,
 				95563EC828A0629800ADA9E7 /* HeaderListView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
