@@ -38,14 +38,10 @@ struct Element: Codable {
         case lastUpdatedBy = "last_updated_by"
     }
     
-    init(id: String, text: String, deadline: Int?, importance: String, done: Bool, color: String?, createdAt: Int, changedAt: Int, lastUpdatedBy: String) {
+    init(id: String, text: String, deadline: Int64?, importance: String, done: Bool, color: String?, createdAt: Int, changedAt: Int, lastUpdatedBy: String) {
         self.id = id
         self.text = text
-        if let deadlineValue = deadline {
-            self.deadline = Int64(deadlineValue)
-        } else {
-            self.deadline = nil
-        }
+        self.deadline = deadline
         self.importance = importance
         self.done = done
         self.color = color

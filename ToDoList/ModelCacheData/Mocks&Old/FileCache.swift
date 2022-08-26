@@ -54,7 +54,6 @@ final class FileCache {
               !items.isEmpty,
               let jsonData = ToDoItemList.json(fromItems: items)
         else { return }
-        print("dd:", String(data: jsonData, encoding: .utf8))
         fileManager.createFile(atPath: cacheUrl.path, contents: jsonData)
     }
     
@@ -69,7 +68,7 @@ final class FileCache {
         var parsed: [ToDoItem]?
         
         parsed = parseCache(cacheUrl)
-        print("parsed:", parsed)
+        
         if parsed == nil {
             guard let path = jsonPath else { return }
             parsed = parseFromFile(pathForFile: path)
@@ -88,7 +87,6 @@ final class FileCache {
             let cacheData = try Data(contentsOf: cacheUrl)
             return cacheData.parseToItems()
         } catch {
-            print("parseErr")
             DDLogInfo(error)
         }
         

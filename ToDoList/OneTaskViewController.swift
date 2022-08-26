@@ -466,13 +466,15 @@ final class OneTaskViewController: UIViewController {
         if let todo = toDo {
             //cache.refreshItem(currentToDo, byId: toDo.id)
             let item = ToDoItem(id: todo.id, text: currentToDo.text, importance: currentToDo.importance, deadline: currentToDo.deadline, isDone: todo.isDone, dateCreated: todo.dateCreated, dateChanged: currentToDo.dateChanged)
-            generalService.edit(item) {
+#warning("completion")
+            generalService.edit(item) { _ in
                 self.delegate?.willDismiss(after: .editing)
                 self.close()
             }
         } else {
             //cache.addItem(item: currentToDo)
-            generalService.add(currentToDo) {
+#warning("completion")
+            generalService.add(currentToDo) { _ in
                 self.delegate?.willDismiss(after: .adding)
                 self.close()
             }
@@ -483,7 +485,8 @@ final class OneTaskViewController: UIViewController {
         
         guard let id = toDo?.id else { return }
         //cache.deleteItem(byId: id)
-        generalService.delete(id) {
+#warning("completion")
+        generalService.delete(id) { _ in
             self.delegate?.updateTableViewDeletingRow()
             //self.delegate?.willDismiss(after: .deleting)
             self.close()

@@ -7,6 +7,13 @@
 
 import Foundation
 
+enum CacheError: Error {
+    case fetchError
+    case noDelegate
+    case badParameters
+    case noItem
+    case noStoreURL
+}
 enum NetworkError: Error {
     case incorrectUrl
     case incorrectToken

@@ -1,17 +1,17 @@
 import Foundation
 
-class MockFileCacheService: FileCacheService {
+class MockFileCacheService/*: FileCacheService*/ {
     
     var fileCache = FileCache()
     
-    func save(to file: String, completion: @escaping ([ToDoItem]) -> Void) {
-        fileCache.saveData(URL(string: file))
-        fileCache.loadData(URL(string: file))
+    func save(items: [ToDoItem], completion: @escaping ([ToDoItem]) -> Void) {
+        fileCache.saveData()
+        fileCache.loadData()
         completion(fileCache.items)
     }
     
-    func load(from url: URL, completion: @escaping ([ToDoItem]) -> Void) {
-        fileCache.loadData(url)
+    func load(/*from url: URL, */completion: @escaping ([ToDoItem]) -> Void) {
+        fileCache.loadData()
         completion(fileCache.items)
     }
     

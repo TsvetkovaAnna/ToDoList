@@ -89,11 +89,10 @@ class APINetworkingService: NetworkService {
     }
     
     func saveAllTodoItems(_ items: [ToDoItem], completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
-        print(#function)
+        
         guard var request = request else { return }
         request.httpMethod = "PATCH"
         request.httpBody = try? JSONEncoder().encode(ListCase(items.map({ $0.likeElement })))
-        print("httpBody list:", String(data: request.httpBody!, encoding: .utf8))
         
         sendRequest(request) { data in
             self.itemsCompletion(from: data) { result in
@@ -107,7 +106,6 @@ class APINetworkingService: NetworkService {
         
         guard var request = combineRequest(item: item) else { return }
         request.httpMethod = "POST"
-        print("addTodoItem, rev:", request.value(forHTTPHeaderField: revisionKey))
         sendRequest(request) { data in
             self.itemCompletion(from: data) { result in
                 completion(result)
@@ -144,8 +142,8 @@ class APINetworkingService: NetworkService {
     
     func itemsCompletion(from data: Data, completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
         guard let listCase = try? JSONDecoder().decode(ListCase.self, from: data)
-        else { completion(.failure(NetworkError.itemDecoding));  print("NetworkError.itemDecoding"); return; }
-        print("succecc decoding, rev;", listCase.revision)
+        else { completion(.failure(NetworkError.itemDecoding));  return; }
+        
         if let revisionValue = listCase.revision {
             revision = String(revisionValue)
         }
