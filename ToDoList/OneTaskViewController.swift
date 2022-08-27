@@ -466,30 +466,32 @@ final class OneTaskViewController: UIViewController {
         if let todo = toDo {
             //cache.refreshItem(currentToDo, byId: toDo.id)
             let item = ToDoItem(id: todo.id, text: currentToDo.text, importance: currentToDo.importance, deadline: currentToDo.deadline, isDone: todo.isDone, dateCreated: todo.dateCreated, dateChanged: currentToDo.dateChanged)
-#warning("completion")
-            generalService.edit(item) { _ in
-                self.delegate?.willDismiss(after: .editing)
-                self.close()
+
+            generalService.redact(.edit, item: item) { result in
+                self.handleResult(result) {
+                    self.delegate?.willDismiss(after: .editing)
+                    self.close()
+                }
             }
         } else {
-            //cache.addItem(item: currentToDo)
-#warning("completion")
-            generalService.add(currentToDo) { _ in
-                self.delegate?.willDismiss(after: .adding)
-                self.close()
+            generalService.redact(.add, item: currentToDo) { result in
+                self.handleResult(result) {
+                    self.delegate?.willDismiss(after: .adding)
+                    self.close()
+                }
+                
             }
         }
     }
     
     @objc private func didTapDeleteButton() {
         
-        guard let id = toDo?.id else { return }
-        //cache.deleteItem(byId: id)
-#warning("completion")
-        generalService.delete(id) { _ in
-            self.delegate?.updateTableViewDeletingRow()
-            //self.delegate?.willDismiss(after: .deleting)
-            self.close()
+        guard let todo = toDo else { return }
+        generalService.redact(.delete, item: todo) { result in
+            self.handleResult(result) {
+                self.delegate?.updateTableViewDeletingRow()
+                self.close()
+            }
         }
     }
     

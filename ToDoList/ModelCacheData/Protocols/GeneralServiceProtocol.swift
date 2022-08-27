@@ -7,15 +7,15 @@
 
 import Foundation
 
+enum Redacting {
+    case add, edit, delete
+}
+
 protocol GeneralServiceProtocol {
     
     func load(completion: @escaping (VoidResult) -> Void) // extra
         
-    func edit(_ item: ToDoItem, _ completion: @escaping (VoidResult) -> Void)
-    
-    func add(_ newItem: ToDoItem, _ completion: @escaping (VoidResult) -> Void)
-    
-    func delete(_ at: String, _ completion: @escaping (VoidResult) -> Void)
+    func redact(_ action: Redacting, item: ToDoItem, _ completion: @escaping (VoidResult) -> Void)
     
     func update(_ completion: @escaping (VoidResult) -> Void)
     

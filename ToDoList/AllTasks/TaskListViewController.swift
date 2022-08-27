@@ -38,10 +38,11 @@ final class TaskListViewController: UIViewController {
         
         let view = TaskListView(frame: .zero, todoItems: generalService.items, deleteAction: { indexPath in
             let item = self.generalService.items[indexPath.row]
-            //self.fileCache.deleteItem(byId: item.id)
-#warning("completion")
-            self.generalService.delete(item.id) { _ in
-                self.taskViewDelegate?.update(with: self.generalService.items, deletingRow: indexPath, refreshingRow: nil)
+            
+            self.generalService.redact(.delete, item: item) { result in
+                self.handleResult(result) {
+                    self.taskViewDelegate?.update(with: self.generalService.items, deletingRow: indexPath, refreshingRow: nil)
+                }
             }
         }, completionWithHeader: { headerView in
             headerView.delegate = self
@@ -120,22 +121,22 @@ final class TaskListViewController: UIViewController {
     }
     
     func updateTableView(_ type: UpdateType) {
-        print(#function)
-        //fileCache.loadData()
-#warning("completion")
-        self.generalService.update { _ in
-            let items = self.isDoneShown ? self.generalService.items : self.generalService.items.filter({ $0.isDone == false })
-            print("c3:", items.count, "type:", type)
-            switch type {
-            case .refresh:
-                print("refreshA")
-                self.taskViewDelegate?.update(with: items, deletingRow: nil, refreshingRow: self.lastIndexPath)
-            case .remove:
-                print("remove")
-                self.taskViewDelegate?.update(with: items, deletingRow: self.lastIndexPath, refreshingRow: nil)
-            case .refreshAll:
-                print("refreshAll")
-                self.taskViewDelegate?.update(with: items, deletingRow: nil, refreshingRow: nil)
+        
+        generalService.update { result in
+            self.handleResult(result) {
+                let items = self.isDoneShown ? self.generalService.items : self.generalService.items.filter({ $0.isDone == false })
+                print("c3:", items.count, "type:", type)
+                switch type {
+                case .refresh:
+                    print("refreshA")
+                    self.taskViewDelegate?.update(with: items, deletingRow: nil, refreshingRow: self.lastIndexPath)
+                case .remove:
+                    print("remove")
+                    self.taskViewDelegate?.update(with: items, deletingRow: self.lastIndexPath, refreshingRow: nil)
+                case .refreshAll:
+                    print("refreshAll")
+                    self.taskViewDelegate?.update(with: items, deletingRow: nil, refreshingRow: nil)
+                }
             }
         }
         
@@ -147,16 +148,18 @@ final class TaskListViewController: UIViewController {
         //navigationItem.titleView?.backgroundColor?.withAlphaComponent(0.5)// = Constants.Colors.Support.navBarBlur
         //navigationItem.titleView?.backgroundColor?.withAlphaComponent(0.8)
         view.backgroundColor = .init(_colorLiteralRed: 0.97, green: 0.97, blue: 0.95, alpha: 1.0)
-#warning("completion")
-        generalService.load { _ in
-            self.view.addSubview(self.viewTable)
-            let tableTop = self.viewTable.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor)
-            let tableBottom = self.viewTable.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor)
-            let tableLeading = self.viewTable.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor)
-            let tableTrailing = self.viewTable.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor)
-            self.viewTable.backgroundColor = .clear
-            
-            NSLayoutConstraint.activate([tableTop, tableBottom, tableLeading, tableTrailing])
+
+        generalService.load { result in
+            self.handleResult(result) {
+                self.view.addSubview(self.viewTable)
+                let tableTop = self.viewTable.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor)
+                let tableBottom = self.viewTable.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor)
+                let tableLeading = self.viewTable.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor)
+                let tableTrailing = self.viewTable.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor)
+                self.viewTable.backgroundColor = .clear
+                
+                NSLayoutConstraint.activate([tableTop, tableBottom, tableLeading, tableTrailing])
+            }
         }
     }
     
@@ -202,10 +205,11 @@ extension TaskListViewController: TaskListViewAndHeaderOutput, OneTaskViewContro
         
         let revertedItem = generalService.items[row].reverted
         
-#warning("completion")
-        generalService.edit(revertedItem) { _ in
-            self.setHeaderDonesCount()
-            self.refreshTableViewRow()
+        generalService.redact(.edit, item: revertedItem) { result in
+            self.handleResult(result) {
+                self.setHeaderDonesCount()
+                self.refreshTableViewRow()
+            }
         }
     }
     
