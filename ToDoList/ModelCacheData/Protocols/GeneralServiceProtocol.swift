@@ -13,7 +13,7 @@ enum Redacting {
 
 protocol GeneralServiceProtocol {
     
-    func load(completion: @escaping (VoidResult) -> Void) // extra
+    func load(completion: @escaping (VoidResult) -> Void)
         
     func redact(_ action: Redacting, item: ToDoItem, _ completion: @escaping (VoidResult) -> Void)
     

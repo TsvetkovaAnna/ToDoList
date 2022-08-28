@@ -54,10 +54,10 @@ struct Element: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
         try container.encode(text, forKey: .text)
-        try container.encode(deadline, forKey: .deadline) //?
+        try container.encode(deadline, forKey: .deadline)
         try container.encode(importance, forKey: .importance)
         try container.encode(done, forKey: .done)
-        try container.encode(color, forKey: .color) //?
+        try container.encode(color, forKey: .color)
         try container.encode(createdAt, forKey: .createdAt)
         try container.encode(changedAt, forKey: .changedAt)
         try container.encode(lastUpdatedBy, forKey: .lastUpdatedBy)
@@ -67,21 +67,15 @@ struct Element: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         text = try container.decode(String.self, forKey: .text)
-        deadline = try? container.decode(Int64.self, forKey: .deadline)
+        deadline = try container.decodeIfPresent(Int64.self, forKey: .deadline)
         importance = try container.decode(String.self, forKey: .importance)
         done = try container.decode(Bool.self, forKey: .done)
-        color = try? container.decode(String.self, forKey: .color)
+        color = try container.decodeIfPresent(String.self, forKey: .color)
         createdAt = try container.decode(Int.self, forKey: .createdAt)
         changedAt = try container.decode(Int.self, forKey: .changedAt)
         lastUpdatedBy = try container.decode(String.self, forKey: .lastUpdatedBy)
     }
 }
-
-//struct TodoResponse: Codable {
-//    let list: [Element]
-//    let revision: Int?
-//    let status: String? //наверно не нужен
-//}
 
 extension Element {
     var likeItem: ToDoItem {

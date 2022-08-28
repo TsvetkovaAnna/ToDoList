@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreData
+import CocoaLumberjack
 
 final class CoreDataManager {
     
@@ -123,7 +124,7 @@ final class CoreDataManager {
             try coordinator.destroyPersistentStore(at: url, type: NSPersistentStore.StoreType(rawValue: NSSQLiteStoreType), options: nil)
             try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
         } catch {
-            print(error)
+            DDLogInfo(error)
         }
     }
    

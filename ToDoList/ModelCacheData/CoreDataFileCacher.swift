@@ -7,7 +7,7 @@
 
 import Foundation
 
-class CoreDataFileCacher: FileCacheService {
+final class CoreDataFileCacher: FileCacheService {
     
     let coreDataManager: CoreDataManager
     
@@ -17,15 +17,15 @@ class CoreDataFileCacher: FileCacheService {
     
     func save(items: [ToDoItem], completion: @escaping (VoidResult) -> Void) {
         do {
+            try coreDataManager.clear()
             
-            try self.coreDataManager.clear()
-            
-            items.forEach { self.add($0) { result in
+            items.forEach {
+                self.add($0) { result in
                 switch result {
                 case .failure(let error):
                     completion(.failure(error))
                 default:
-                    print("super")
+                    break
                 }
             } }
             
@@ -38,7 +38,7 @@ class CoreDataFileCacher: FileCacheService {
     
     func load(/*from url: URL, */completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
         do {
-            let todos = try self.coreDataManager.getAllTodos()
+            let todos = try coreDataManager.getAllTodos()
             completion(.success(todos))
         } catch {
             completion(.failure(error))
@@ -47,7 +47,7 @@ class CoreDataFileCacher: FileCacheService {
     
     func add(_ newItem: ToDoItem, completion: @escaping (VoidResult) -> Void) {
         do {
-            try self.coreDataManager.createNewTodo(newItem)
+            try coreDataManager.createNewTodo(newItem)
             completion(.success)
         } catch {
             completion(.failure(error))
@@ -56,7 +56,7 @@ class CoreDataFileCacher: FileCacheService {
     
     func edit(_ item: ToDoItem, completion: @escaping (VoidResult) -> Void) {
         do {
-            try self.coreDataManager.updateTodo(item)
+            try coreDataManager.updateTodo(item)
             completion(.success)
         } catch {
             completion(.failure(error))
@@ -65,17 +65,10 @@ class CoreDataFileCacher: FileCacheService {
     
     func delete(id: String, completion: @escaping (VoidResult) -> Void) {
         do {
-            try self.coreDataManager.deleteTodo(id)
+            try coreDataManager.deleteTodo(id)
             completion(.success)
         } catch {
             completion(.failure(error))
         }
     }
-    
-    
-    /*private func perfomOnOtherThread(_ completion: @escaping () -> Void) {
-        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now()) {
-            completion()
-        }
-    }*/
 }

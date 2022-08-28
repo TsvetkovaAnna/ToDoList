@@ -1,6 +1,6 @@
 import UIKit
 
-class TransitionNavigationController: UINavigationController, UIViewControllerTransitioningDelegate {
+final class TransitionNavigationController: UINavigationController, UIViewControllerTransitioningDelegate {
     
     var sourceFrame: CGRect?
     

@@ -80,7 +80,6 @@ final class FileCache {
     }
     
     func parseCache(_ fromURL: URL? = nil) -> [ToDoItem]? {
-        print(#function)
         guard let cacheUrl = fromURL ?? cacheUrl else { return nil }
         
         do {

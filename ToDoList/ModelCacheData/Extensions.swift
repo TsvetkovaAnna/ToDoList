@@ -18,19 +18,19 @@ extension Data {
         } catch {
             DDLogInfo(error)
         }
-        
         return nil
     }
 }
 
 extension UIViewController {
-    func handleResult(_ result: VoidResult, successCompletion: () -> Void) {
+    func handleResult(_ result: VoidResult, successCompletion: () -> Void, failureCompletion: (() -> Void)? = nil) {
         switch result {
         case .failure(let error):
             let alertController = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .actionSheet)
             let okAction = UIAlertAction(title: "Ok", style: .cancel)
             alertController.addAction(okAction)
             self.present(alertController, animated: true)
+            failureCompletion?()
         case .success:
             successCompletion()
         }

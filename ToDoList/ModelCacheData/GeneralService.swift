@@ -8,7 +8,7 @@
 import Foundation
 import CocoaLumberjack
 
-class GeneralService: GeneralServiceProtocol {
+final class GeneralService: GeneralServiceProtocol {
     
     // MARK: Public
     
@@ -55,9 +55,9 @@ class GeneralService: GeneralServiceProtocol {
     
     func update(_ completion: @escaping (VoidResult) -> Void) {
         
-        func saveFreshItems(_ freshItems: [ToDoItem], _ completion: @escaping (VoidResult) -> Void) {  // needed for weak?
-            self.items = freshItems
-            self.fileCacheService.save(items: self.items) { result in
+        func saveFreshItems(_ freshItems: [ToDoItem], _ completion: @escaping (VoidResult) -> Void) {
+            items = freshItems
+            fileCacheService.save(items: items) { result in
                 completion(result)
             }
         }
@@ -120,9 +120,9 @@ class GeneralService: GeneralServiceProtocol {
     // MARK: Private
     
     private func refreshOwnItems(_ networkResult: Result<ToDoItem, Error>, _ completion: @escaping (VoidResult) -> Void) {
-        perfomInMainThread {
-            self.fileCacheService.load { [weak self] cacheResult in
-                guard let self = self else { return }
+        perfomInMainThread { [weak self] in
+            guard let self = self else { return }
+            self.fileCacheService.load { cacheResult in
                 
                 switch cacheResult {
                 case .success(let actualItems):
@@ -144,7 +144,7 @@ class GeneralService: GeneralServiceProtocol {
     }
     
     private func redactNetworkItem(_ action: Redacting, item: ToDoItem, _ completion: @escaping (Result<ToDoItem, Error>) -> Void) {
-        self.update { [weak self] updatingResult in //needed for weak??
+        update { [weak self] updatingResult in
             guard let self = self else { return }
             switch updatingResult {
             case .success where action == .add:

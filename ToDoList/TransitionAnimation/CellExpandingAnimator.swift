@@ -1,6 +1,6 @@
 import UIKit
 
-class CellExpandingAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+final class CellExpandingAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     
     private let duration = 0.5
     let sourceFrame: CGRect?
