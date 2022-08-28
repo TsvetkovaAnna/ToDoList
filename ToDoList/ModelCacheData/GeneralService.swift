@@ -25,8 +25,8 @@ class GeneralService: GeneralServiceProtocol {
     
     func load(completion: @escaping (VoidResult) -> Void) {
             
-        fileCacheService.load { result in
-            
+        fileCacheService.load { [weak self] result in
+            guard let self = self else { return }
             switch result {
             case .success(let cacheItems):
                 self.items = cacheItems
@@ -37,8 +37,9 @@ class GeneralService: GeneralServiceProtocol {
         }
     }
     
-    func redact(_ action: Redacting, item: ToDoItem, _ completion: @escaping (VoidResult) -> Void) {
-        redactNetworkItem(action, item: item) { networkResult in
+    func redact(_ action: Redacting, item: ToDoItem, _ completion: @escaping (VoidResult) -> Void) { 
+        redactNetworkItem(action, item: item) { [weak self] networkResult in
+            guard let self = self else { return }
             self.redactLocally(action, item: item, byResult: networkResult) { result in
                 switch result {
                 case .success:
@@ -54,7 +55,7 @@ class GeneralService: GeneralServiceProtocol {
     
     func update(_ completion: @escaping (VoidResult) -> Void) {
         
-        func saveFreshItems(_ freshItems: [ToDoItem], _ completion: @escaping (VoidResult) -> Void) {
+        func saveFreshItems(_ freshItems: [ToDoItem], _ completion: @escaping (VoidResult) -> Void) {  // needed for weak?
             self.items = freshItems
             self.fileCacheService.save(items: self.items) { result in
                 completion(result)
@@ -143,7 +144,8 @@ class GeneralService: GeneralServiceProtocol {
     }
     
     private func redactNetworkItem(_ action: Redacting, item: ToDoItem, _ completion: @escaping (Result<ToDoItem, Error>) -> Void) {
-        self.update { updatingResult in
+        self.update { [weak self] updatingResult in //needed for weak??
+            guard let self = self else { return }
             switch updatingResult {
             case .success where action == .add:
                 self.networkService.addTodoItem(item) { networkResult in
@@ -166,7 +168,8 @@ class GeneralService: GeneralServiceProtocol {
     }
     
     private func redactLocally(_ action: Redacting, item: ToDoItem, byResult networkResult: Result<ToDoItem, Error>, _ completion: @escaping (VoidResult) -> Void) {
-        perfomInMainThread {
+        perfomInMainThread { [weak self] in
+            guard let self = self else { return }
             switch networkResult {
             case .success where action == .add:
                 self.fileCacheService.add(item) { result in
