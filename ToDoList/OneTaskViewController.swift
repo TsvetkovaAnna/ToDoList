@@ -18,9 +18,6 @@ extension OneTaskViewController: UITextViewDelegate {
         let fixedWidth = textView.frame.size.width
         let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
         textView.frame.size = CGSize(width: fixedWidth, height: max(newSize.height, textViewHeight))
-        //textView.frame = CGRect(origin: textView.frame.origin, size: newSize)
-//        textView.sizeToFit()
-//        textViewHeight = textView.contentSize.height
     }
 }
 
