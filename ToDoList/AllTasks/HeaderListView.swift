@@ -59,7 +59,6 @@ final class HeaderListView: UIView {
     
     @objc private func showHideDone() {
         isShown.toggle()
-        // setShowHideButton()
         delegate?.toggleShown()
         DDLogInfo("Show tapped")
     }

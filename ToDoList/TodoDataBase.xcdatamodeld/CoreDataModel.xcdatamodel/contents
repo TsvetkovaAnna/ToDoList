@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19461" systemVersion="20G624" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="TodoEntity" representedClassName="TodoEntity" syncable="YES">
+        <attribute name="changedAt" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="color" optional="YES" attributeType="String"/>
+        <attribute name="createdAt" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="deadline" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="done" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="id" attributeType="String"/>
+        <attribute name="importance" attributeType="String" defaultValueString="basic"/>
+        <attribute name="lastUpdatedBy" attributeType="String"/>
+        <attribute name="text" attributeType="String"/>
+    </entity>
+    <elements>
+        <element name="TodoEntity" positionX="-63" positionY="-18" width="128" height="164"/>
+    </elements>
+</model>

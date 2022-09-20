@@ -31,9 +31,6 @@ final class TaskListView: UIView {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.backgroundColor = Constants.Colors.Back.primary
         tableView.layer.borderColor = UIColor.gray.cgColor
-//        tableView.layer.borderWidth = 1
-//        tableView.layer.cornerRadius = 16
-//        tableView.clipsToBounds = true
         tableView.layer.borderColor = UIColor.white.cgColor
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: defaultCellIdentifier)
         tableView.register(NewTableViewCell.self, forCellReuseIdentifier: NewTableViewCell.identifier)
@@ -42,17 +39,8 @@ final class TaskListView: UIView {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        //tableView.estimatedRowHeight = 56
         return tableView
     }()
-    
-//    private lazy var tableHeaderView: HeaderListView = {
-//        let tableHeaderView = HeaderListView()
-//
-//        tableHeaderView.delegate = self
-//        tableHeaderView.translatesAutoresizingMaskIntoConstraints = false
-//        return tableHeaderView
-//    }()
     
     lazy var headerListView: HeaderListView = {
         HeaderListView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
@@ -64,15 +52,11 @@ final class TaskListView: UIView {
         super.init(frame: frame)
         setupView()
         completionWithHeader(headerListView)
-        //self.addGestureRecognizer(tapRecognizer)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    /*deinit {
-        self.removeGestureRecognizer(tapRecognizer)
-    }*/
 
     @objc private func createNewTask() {
         delegate?.presentNewItem()
@@ -89,12 +73,6 @@ final class TaskListView: UIView {
         self.addSubview(addButton)
         let addBottom = addButton.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -54)
         let addCenterX = addButton.centerXAnchor.constraint(equalTo: self.centerXAnchor)
-        
-        //addButton.bringSubviewToFront(plus)
-        
-//        let plusX = plus.centerXAnchor.constraint(equalTo: self.centerXAnchor)
-//        let plusBottom = plus.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -54)
-//        let plusH = plus.heightAnchor.constraint(equalToConstant: 22)
         
         NSLayoutConstraint.activate([tableTop, tableBottom, tableLeading, tableTrailing, addBottom, addCenterX])
     }
@@ -216,22 +194,11 @@ extension TaskListView: TaskListViewInput {
             }
         }
     }
-    
-//    func reloadData() {
-//        tableView.reloadData()
-//        DDLogInfo("should load")
-//    }
 }
 
-extension TaskListView: TaskTableViewCellDelegate/*, OneTaskViewControllerDelegate*/ {
+extension TaskListView: TaskTableViewCellDelegate {
     
     func changeIsDone(_ indexPath: IndexPath?) {
         delegate?.changeIsDone(indexPath)
     }
-    
-    /*func openCurrentTask() {
-        //let oneTaskController = OneTaskViewController()
-        //oneTaskController.delegate = self
-        //present(oneTaskController, animated: true) //нет презента, так как не контроллер
-    }*/
 }

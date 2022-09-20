@@ -6,11 +6,11 @@
 //
 
 import Foundation
+import CocoaLumberjack
 
-class APINetworkingService: NetworkService {
+final class APINetworkingService: NetworkService {
     
     let authKey = "Authorization"
-    let authToken = "Bearer GuidebookOfFungi"
     
     let revisionKey = "X-Last-Known-Revision"
     var revision: String?
@@ -19,7 +19,8 @@ class APINetworkingService: NetworkService {
     let urlSession: URLSession
     
     var request: URLRequest? {
-        guard let baseURL = baseURL else { return nil }
+        guard let authToken = TokenKeeper.load(),
+              let baseURL = baseURL else { return nil }
         var request = URLRequest(url: baseURL)
         request.setValue(authToken, forHTTPHeaderField: authKey)
         
@@ -36,27 +37,8 @@ class APINetworkingService: NetworkService {
         self.urlSession = URLSession(configuration: configuration)
     }
     
-    func sendRequest(_ request: URLRequest, completion: @escaping (Data) -> Void) {
-        
-        urlSession.dataTask(with: request) { (data, response, error) in
-            
-            if let error = error {
-                print("error:", error)
-            }
-            
-            if let data = data {
-                print("\(request.httpMethod ?? "") data:", data.count, data.description)
-                completion(data)
-            }
-                      
-            if let response = response {
-                print("resp:", response.description)
-            }
-        }.resume()
-    }
-    
     func getTodoItem(_ id: String, completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
-        print(#function)
+        DDLogInfo(#function)
         guard var request = request,
             let url = request.url,
             var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
@@ -68,7 +50,8 @@ class APINetworkingService: NetworkService {
         request.url = url
         request.httpMethod = "GET"
 
-        sendRequest(request) { data in
+        sendRequest(request) { [weak self] data in
+            guard let self = self else { return }
             self.itemsCompletion(from: data) { result in
                 completion(result)
             }
@@ -76,12 +59,13 @@ class APINetworkingService: NetworkService {
     }
     
     func getAllTodoItems(completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
-        print(#function)
+        DDLogInfo(#function)
         guard var request = request else { return }
         request.httpMethod = "GET"
         request.setValue(nil, forHTTPHeaderField: revisionKey)
         
-        sendRequest(request) { data in
+        sendRequest(request) { [weak self] data in
+            guard let self = self else { return }
             self.itemsCompletion(from: data) { result in
                 completion(result)
             }
@@ -89,13 +73,13 @@ class APINetworkingService: NetworkService {
     }
     
     func saveAllTodoItems(_ items: [ToDoItem], completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
-        print(#function)
+        
         guard var request = request else { return }
         request.httpMethod = "PATCH"
         request.httpBody = try? JSONEncoder().encode(ListCase(items.map({ $0.likeElement })))
-        print("httpBody list:", String(data: request.httpBody!, encoding: .utf8))
         
-        sendRequest(request) { data in
+        sendRequest(request) { [weak self] data in
+            guard let self = self else { return }
             self.itemsCompletion(from: data) { result in
                 completion(result)
             }
@@ -107,8 +91,8 @@ class APINetworkingService: NetworkService {
         
         guard var request = combineRequest(item: item) else { return }
         request.httpMethod = "POST"
-        print("addTodoItem, rev:", request.value(forHTTPHeaderField: revisionKey))
-        sendRequest(request) { data in
+        sendRequest(request) { [weak self] data in
+            guard let self = self else { return }
             self.itemCompletion(from: data) { result in
                 completion(result)
             }
@@ -116,13 +100,14 @@ class APINetworkingService: NetworkService {
     }
     
     func editTodoItem(_ item: ToDoItem, completion: @escaping (Result<ToDoItem, Error>) -> Void) {
-        print(#function)
+        DDLogInfo(#function)
         guard var request = combineRequest(id: item.id, item: item) else { return }
         
         request.setValue(revision, forHTTPHeaderField: revisionKey)
         request.httpMethod = "PUT"
         
-        sendRequest(request) { data in
+        sendRequest(request) { [weak self] data in
+            guard let self = self else { return }
             self.itemCompletion(from: data) { result in
                 completion(result)
             }
@@ -130,29 +115,46 @@ class APINetworkingService: NetworkService {
     }
     
     func deleteTodoItem(at id: String, completion: @escaping (Result<ToDoItem, Error>) -> Void) {
-        print(#function)
+        DDLogInfo(#function)
         guard var request = combineRequest(id: id) else { return }
         
         request.httpMethod = "DELETE"
         
-        sendRequest(request) { data in
+        sendRequest(request) { [weak self] data in
+            guard let self = self else { return }
             self.itemCompletion(from: data) { result in
                 completion(result)
             }
         }
     }
     
-    func itemsCompletion(from data: Data, completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
+    // MARK: Private
+    
+    private func sendRequest(_ request: URLRequest, completion: @escaping (Data) -> Void) {
+        
+        urlSession.dataTask(with: request) { (data, _/*response*/, error) in
+            
+            if let error = error {
+                DDLogInfo(error)
+            }
+            
+            if let data = data {
+                completion(data)
+            }
+        }.resume()
+    }
+    
+    private func itemsCompletion(from data: Data, completion: @escaping (Result<[ToDoItem], Error>) -> Void) {
         guard let listCase = try? JSONDecoder().decode(ListCase.self, from: data)
-        else { completion(.failure(NetworkError.itemDecoding));  print("NetworkError.itemDecoding"); return; }
-        print("succecc decoding, rev;", listCase.revision)
+        else { completion(.failure(NetworkError.itemDecoding));  return; }
+        
         if let revisionValue = listCase.revision {
             revision = String(revisionValue)
         }
         completion(.success(listCase.list.map({ $0.likeItem })))
     }
     
-    func itemCompletion(from data: Data, completion: @escaping (Result<ToDoItem, Error>) -> Void) {
+    private func itemCompletion(from data: Data, completion: @escaping (Result<ToDoItem, Error>) -> Void) {
         guard let elementCase = try? JSONDecoder().decode(ElementCase.self, from: data)
         else { completion(.failure(NetworkError.itemDecoding)); return }
         if let revisionValue = elementCase.revision {
@@ -161,7 +163,7 @@ class APINetworkingService: NetworkService {
         completion(.success(elementCase.element.likeItem))
     }
     
-    func combineRequest(id: String? = nil, item: ToDoItem? = nil) -> URLRequest? {
+    private func combineRequest(id: String? = nil, item: ToDoItem? = nil) -> URLRequest? {
         guard let baseURL = baseURL, var request = request else { return nil }
         
         if let id = id {
@@ -170,7 +172,6 @@ class APINetworkingService: NetworkService {
         
         if let item = item {
             request.httpBody = try? JSONEncoder().encode(ElementCase(item.likeElement))
-            print("httpBody:", String(data: request.httpBody!, encoding: .utf8))
         }
         
         return request

@@ -18,9 +18,6 @@ extension OneTaskViewController: UITextViewDelegate {
         let fixedWidth = textView.frame.size.width
         let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
         textView.frame.size = CGSize(width: fixedWidth, height: max(newSize.height, textViewHeight))
-        //textView.frame = CGRect(origin: textView.frame.origin, size: newSize)
-//        textView.sizeToFit()
-//        textViewHeight = textView.contentSize.height
     }
 }
 
@@ -29,8 +26,6 @@ final class OneTaskViewController: UIViewController {
     private var toDo: ToDoItem?
     
     private var generalService: GeneralServiceProtocol
-    
-    //private var lastItemId: String? = nil
     
     private var buttonDeleteHeight: CGFloat = 56
     
@@ -50,7 +45,7 @@ final class OneTaskViewController: UIViewController {
         
         guard let text = textView.text else { return nil }
         
-        let importance: ToDoItem.Importance// = .basic
+        let importance: ToDoItem.Importance
 
         switch segment.selectedSegmentIndex {
         case 0:
@@ -81,7 +76,6 @@ final class OneTaskViewController: UIViewController {
     private lazy var saveBarButton: UIBarButtonItem = {
         let barButton = UIBarButtonItem(title: "Сохранить", style: .plain, target: self, action: #selector(saveToDo))
         barButton.tintColor = Constants.Colors.Color.blue
-        // Constants.Colors.Label.tertiary :
         barButton.isEnabled = false
         return barButton
     }()
@@ -113,10 +107,6 @@ final class OneTaskViewController: UIViewController {
         return textView
     }()
     
-//    var textChanged: () -> Void = {
-//        self.saveBarButton.isEnabled = !self.textView.isEmpty
-//    }
-    
     private lazy var accessoriesVerticalStack: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -126,7 +116,7 @@ final class OneTaskViewController: UIViewController {
         stackView.distribution = .fill
         stackView.isLayoutMarginsRelativeArrangement = true
         stackView.layoutMargins = UIEdgeInsets(top: 10, left: 16, bottom: 10, right: 12)
-        stackView.spacing = 10 //как сделать отступ сверху у сегмента? может не через стек?
+        stackView.spacing = 10
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -151,7 +141,6 @@ final class OneTaskViewController: UIViewController {
         stack.axis = .horizontal
         //stack.alignment = .center
         stack.distribution = .equalCentering
-        //stack.setContentCompressionResistancePriority(UILayoutPriority(1000), for: .vertical)
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
@@ -161,8 +150,6 @@ final class OneTaskViewController: UIViewController {
         stack.axis = .vertical
         stack.alignment = .fill
         stack.distribution = .fillEqually//.equalCentering //
-        //let gesture = UITapGestureRecognizer(target: self, action: #selector(openCalendar))
-        //stack.setContentCompressionResistancePriority(UILayoutPriority(1000), for: .vertical)
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
@@ -172,7 +159,6 @@ final class OneTaskViewController: UIViewController {
         stack.axis = .horizontal
         stack.alignment = .center
         stack.distribution = .fill//.equalCentering
-        //stack.setContentCompressionResistancePriority(UILayoutPriority(1000), for: .vertical)
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
@@ -213,7 +199,6 @@ final class OneTaskViewController: UIViewController {
         segment.layer.cornerRadius = 9
         segment.backgroundColor = Constants.Colors.Support.overlay
         segment.selectedSegmentTintColor = .white
-        //segment.selectedSegmentIndex = 2
         segment.translatesAutoresizingMaskIntoConstraints = false
         segment.isUserInteractionEnabled = true
         segment.addTarget(self, action: #selector(setupSaveButton), for: .valueChanged)
@@ -222,7 +207,6 @@ final class OneTaskViewController: UIViewController {
     
     private lazy var switcher: UISwitch = {
         let switcher = UISwitch()
-        //switcher.backgroundColor = .init(red: 0.2, green: 0.78, blue: 0.35, alpha: 1.0)
         switcher.translatesAutoresizingMaskIntoConstraints = false
         switcher.addTarget(self, action: #selector(switchDeadlineLabel), for: .touchUpInside)
         return switcher
@@ -231,7 +215,6 @@ final class OneTaskViewController: UIViewController {
     lazy var buttonDelete: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 16
-        //button.clipsToBounds = true
         button.backgroundColor = .white
         button.tintColor = .black //?
         button.setTitleColor(Constants.Colors.Color.red, for: .normal)
@@ -239,7 +222,6 @@ final class OneTaskViewController: UIViewController {
         button.setTitle("Удалить", for: .normal)
         button.addTarget(self, action: #selector(didTapDeleteButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
-        //button.isEnabled = toDo != nil
         button.isEnabled = !textView.isEmpty
         return button
     }()
@@ -247,7 +229,7 @@ final class OneTaskViewController: UIViewController {
     private lazy var calendar: UIDatePicker = {
         let calendar = UIDatePicker()
         calendar.datePickerMode = .date
-        calendar.preferredDatePickerStyle = .inline //как добиться выбора даты при .inline??
+        calendar.preferredDatePickerStyle = .inline
         calendar.locale = Locale.init(identifier: "ru_RU")
         calendar.calendar = Calendar.current
         calendar.translatesAutoresizingMaskIntoConstraints = false
@@ -262,7 +244,6 @@ final class OneTaskViewController: UIViewController {
     init(toDoItem: ToDoItem?, generalService: GeneralServiceProtocol) {
         self.toDo = toDoItem
         self.generalService = generalService
-        //self.textView.text = toDoItem.text
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -328,28 +309,19 @@ final class OneTaskViewController: UIViewController {
             if let barHeight = navigationController?.navigationBar.frame.height {
                 navBarHeight = barHeight
             }
-            
-            //let yOffset = keyboardOriginY <= deleteButtonBottomPointY ? deleteButtonBottomPointY - keyboardOriginY + 16  : 0
             let yOffset = keyboardOriginY <= deleteButtonBottomPointY ? deleteButtonBottomPointY - keyboardOriginY + 16 - navBarHeight : 0 - navBarHeight
             scrollView.setContentOffset(CGPoint(x: 0, y: yOffset), animated: true)
         }
-//        guard let keyboardFrameValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue
-//        else { return }
-        
-//        let offsetY = keyboardFrameValue.cgRectValue.height
-        //scrollView.setContentOffset(CGPoint(x: 0, y: offsetY), animated: true)
-        
     }
     
     @objc private func keyboardDidHide(_ notification: Notification) {
         view.removeGestureRecognizer(tapRecognizer)
         
         var navBarHeight: CGFloat = 0
-        if let barHeight = navigationController?.navigationBar.frame.height {//navigationController?.tabBarController?.tabBar.frame.height {
+        if let barHeight = navigationController?.navigationBar.frame.height {
             navBarHeight = barHeight
         }
         let yOffset = 0 - navBarHeight
-        //scrollView.setContentOffset(.zero, animated: true)
         scrollView.setContentOffset(CGPoint(x: 0, y: yOffset), animated: true)
     }
     
@@ -376,8 +348,6 @@ final class OneTaskViewController: UIViewController {
         let contentViewBottom = contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
         let contentViewWidth = contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
         let contentViewX = contentView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor)
-        
-        //textView.addSubview(placeholderLabel)
         
         NSLayoutConstraint.activate([scrollViewTop, scrollViewBottom, scrollViewLeading, scrollViewTrailing, contentViewTop, contentViewBottom, contentViewWidth, contentViewX])
         
@@ -422,13 +392,11 @@ final class OneTaskViewController: UIViewController {
         deadlineDateVerticalStack.addArrangedSubview(deadlineLabel)
         deadlineDateVerticalStack.addArrangedSubview(calendarLabel)
 
-        //let importanceHorizontalStackHeight = importanceHorizontalStack.heightAnchor.constraint(equalToConstant: 46)
         let separatorHeight = separator.heightAnchor.constraint(equalToConstant: 0.5)
-        //let deadlineHorizontalStackHeight = deadlineHorizontalStack.heightAnchor.constraint(equalToConstant: 49)
         let separator2Height = separatorCalendar.heightAnchor.constraint(equalToConstant: 0.5)
         let segmentWidth = segment.widthAnchor.constraint(equalToConstant: 150)
         
-        NSLayoutConstraint.activate([accessoriesStackViewTop, accessoriesStackViewX, accessoriesStackViewLeading, accessoriesViewTrailing, separatorHeight/*, importanceHorizontalStackHeight, deadlineHorizontalStackHeight*/, separator2Height, segmentWidth])
+        NSLayoutConstraint.activate([accessoriesStackViewTop, accessoriesStackViewX, accessoriesStackViewLeading, accessoriesViewTrailing, separatorHeight, separator2Height, segmentWidth])
     }
     
     private func setButtonDelete() {
@@ -454,7 +422,6 @@ final class OneTaskViewController: UIViewController {
     @objc private func close() {
         //returnToTaskList()
         //navigationController?.popViewController(animated: true)
-        
         //delegate?.willDismiss(after: action)
         dismiss(animated: true)
     }
@@ -464,29 +431,32 @@ final class OneTaskViewController: UIViewController {
         guard let currentToDo = currentToDo else { return }
         
         if let todo = toDo {
-            //cache.refreshItem(currentToDo, byId: toDo.id)
             let item = ToDoItem(id: todo.id, text: currentToDo.text, importance: currentToDo.importance, deadline: currentToDo.deadline, isDone: todo.isDone, dateCreated: todo.dateCreated, dateChanged: currentToDo.dateChanged)
-            generalService.edit(item) {
-                self.delegate?.willDismiss(after: .editing)
-                self.close()
+
+            generalService.redact(.edit, item: item) { result in
+                self.handleResult(result) {
+                    self.delegate?.willDismiss(after: .editing)
+                    self.close()
+                }
             }
         } else {
-            //cache.addItem(item: currentToDo)
-            generalService.add(currentToDo) {
-                self.delegate?.willDismiss(after: .adding)
-                self.close()
+            generalService.redact(.add, item: currentToDo) { result in
+                self.handleResult(result) {
+                    self.delegate?.willDismiss(after: .adding)
+                    self.close()
+                }
             }
         }
     }
     
     @objc private func didTapDeleteButton() {
         
-        guard let id = toDo?.id else { return }
-        //cache.deleteItem(byId: id)
-        generalService.delete(id) {
-            self.delegate?.updateTableViewDeletingRow()
-            //self.delegate?.willDismiss(after: .deleting)
-            self.close()
+        guard let todo = toDo else { return }
+        generalService.redact(.delete, item: todo) { result in
+            self.handleResult(result) {
+                self.delegate?.updateTableViewDeletingRow()
+                self.close()
+            }
         }
     }
     
@@ -513,14 +483,9 @@ final class OneTaskViewController: UIViewController {
         DDLogInfo("empty text - \(self.textView.isEmpty)")
         saveBarButton.isEnabled = !textView.isEmpty && !isCurrentSame
     }
-    
-//    @objc func setupDeleteButton() {
-//        buttonDelete.isEnabled = !textView.isEmpty
-//    }
 
     @objc private func openCalendar() {
         separatorCalendar.isHidden.toggle()
         calendar.isHidden.toggle()
     }
-    
 }
