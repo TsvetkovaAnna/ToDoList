@@ -28,7 +28,8 @@ final class TaskListViewController: UIViewController {
     
     private lazy var viewTable: TaskListView = {
         
-        let view = TaskListView(frame: .zero, todoItems: generalService.items, deleteAction: { indexPath in
+        let view = TaskListView(frame: .zero, todoItems: generalService.items, deleteAction: { [weak self] indexPath in
+            guard let self = self else { return }
             let item = self.generalService.items[indexPath.row]
             
             self.showIndicator()
@@ -38,7 +39,8 @@ final class TaskListViewController: UIViewController {
                     self.hideIndicator()
                 } failureCompletion: { self.hideIndicator() }
             }
-        }, completionWithHeader: { headerView in
+        }, completionWithHeader: { [weak self] headerView in
+            guard let self = self else { return }
             headerView.delegate = self
             self.headerDelegate = headerView
             self.setHeaderDonesCount()
@@ -100,7 +102,8 @@ final class TaskListViewController: UIViewController {
     func updateTableView(_ type: UpdateType) {
         
         showIndicator()
-        generalService.update { result in
+        generalService.update { [weak self] result in
+            guard let self = self else { return }
             self.handleResult(result) {
                 let items = self.isDoneShown ? self.generalService.items : self.generalService.items.filter({ $0.isDone == false })
                 
@@ -124,7 +127,8 @@ final class TaskListViewController: UIViewController {
         view.backgroundColor = .init(_colorLiteralRed: 0.97, green: 0.97, blue: 0.95, alpha: 1.0)
 
         showIndicator()
-        generalService.load { result in
+        generalService.load { [weak self] result in
+            guard let self = self else { return }
             self.handleResult(result) {
                 self.view.addSubview(self.viewTable)
                 let tableTop = self.viewTable.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor)
@@ -166,7 +170,8 @@ extension TaskListViewController: TaskListViewAndHeaderOutput, OneTaskViewContro
         let revertedItem = generalService.items[row].reverted
         
         showIndicator()
-        generalService.redact(.edit, item: revertedItem) { result in
+        generalService.redact(.edit, item: revertedItem) { [weak self] result in
+            guard let self = self else { return }
             self.handleResult(result) {
                 self.setHeaderDonesCount()
                 self.refreshTableViewRow()
